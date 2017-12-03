@@ -57,9 +57,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sources\FieldTests\FieldTests.cs" />
-    <Compile Include="Sources\FieldTests\MineTests.cs" />
-    <Compile Include="Sources\FieldTests\NumberOfMinesTests.cs" />
+    <Compile Include="Sources\DataTests\FieldTests.cs" />
+    <Compile Include="Sources\DataTests\MineTests.cs" />
+    <Compile Include="Sources\DataTests\NumberOfMinesTests.cs" />
     <Compile Include="Sources\MathTests\StdRandomizerTests.cs" />
   </ItemGroup>
   <ItemGroup>

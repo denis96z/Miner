@@ -46,12 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Sources\Field\Cell.cs" />
-    <Compile Include="Sources\Field\CellObject.cs" />
-    <Compile Include="Sources\Field\CellState.cs" />
-    <Compile Include="Sources\Field\Field.cs" />
-    <Compile Include="Sources\Field\Mine.cs" />
-    <Compile Include="Sources\Field\NumberOfMines.cs" />
+    <Compile Include="Sources\Data\Cell.cs" />
+    <Compile Include="Sources\Data\CellObject.cs" />
+    <Compile Include="Sources\Data\CellState.cs" />
+    <Compile Include="Sources\Data\Field.cs" />
+    <Compile Include="Sources\Data\Mine.cs" />
+    <Compile Include="Sources\Data\NumberOfMines.cs" />
+    <Compile Include="Sources\Graphics\ControlFieldView.cs" />
+    <Compile Include="Sources\Graphics\IFieldView.cs" />
     <Compile Include="Sources\Math\IRandomizer.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
