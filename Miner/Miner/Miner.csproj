@@ -52,8 +52,8 @@
     <Compile Include="Sources\Data\Field.cs" />
     <Compile Include="Sources\Data\Mine.cs" />
     <Compile Include="Sources\Data\NumberOfMines.cs" />
-    <Compile Include="Sources\Graphics\ControlFieldView.cs" />
-    <Compile Include="Sources\Graphics\IFieldView.cs" />
+    <Compile Include="Sources\View\ControlFieldView.cs" />
+    <Compile Include="Sources\View\IFieldView.cs" />
     <Compile Include="Sources\Math\IRandomizer.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -72,6 +72,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -86,6 +87,20 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Explode.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Flag.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Mark.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Mine.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Reveal.wav" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
