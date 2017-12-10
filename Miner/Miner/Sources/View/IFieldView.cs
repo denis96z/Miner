@@ -37,13 +37,9 @@ namespace Miner.View
         void SetSelectorPosition(int row, int col);
 
         /// <summary>
-        /// Отображает указатель выбранной клетки на графической поверхности.
+        /// Возвращает или устанавливает true, если указатель
+        /// на выбранную пользователем клетку видим, иначе - false.
         /// </summary>
-        void ShowSelector();
-
-        /// <summary>
-        /// Скрывает указатель выбранной клетки на графической поверхности.
-        /// </summary>
-        void HideSelector();
+        bool SelectorVisible { get; set; }
     }
 }

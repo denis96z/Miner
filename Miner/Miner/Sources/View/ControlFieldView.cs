@@ -9,16 +9,18 @@ namespace Miner.View
     /// <summary>
     /// Компонент визуального отображения игрового поля.
     /// </summary>
-    class ControlFieldView : IFieldView
+    public class ControlFieldView : IFieldView
     {
-        // Ширина и высота клетки.
-        private const int CELL_SIZE = 10;
+        /// <summary>
+        /// Ширина и высота клетки игрового поля.
+        /// </summary>
+        public const int CELL_SIZE = 10;
 
         // Игровое поле.
-        private readonly Field field;
+        private readonly IField field;
 
         // Позиция указателя выбранной клетки.
-        private volatile int selectorRow = 0, selectorCol = 0;
+        private int selectorRow = 0, selectorCol = 0;
 
         // Графический контроллер.
         private readonly Control control;
@@ -40,14 +42,38 @@ namespace Miner.View
         /// </summary>
         /// <param name="field">Игровое поле.</param>
         /// <param name="control">Графический контроллер.</param>
-        public ControlFieldView(Field field, Control control)
+        /// <param name="selectorVisible">Признак: указатель выбранной клетки видим.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public ControlFieldView(IField field, Control control, bool selectorVisible = true)
         {
-            this.field = field;
-            this.control = control;
+            this.field = field ?? throw new ArgumentNullException();
+            this.control = control ?? throw new ArgumentNullException();
+
+            ResizeControl();
+            this.field.Resized += OnFieldResized;
+            this.field.Modified += OnFieldModified;
+
             graphics = control.CreateGraphics();
         }
 
+        ~ControlFieldView()
+        {
+            field.Resized -= OnFieldResized;
+        }
+
         #region ControlMethods
+
+        // Обработчик события изменения размеров поля.
+        private void OnFieldResized(object sender, EventArgs e)
+        {
+            ResizeControl();
+        }
+
+        // Обработчик события изменения клеток поля.
+        private void OnFieldModified(object sender, EventArgs e)
+        {
+            ShowField();
+        }
 
         // Масштабирует графический контроллер для отображения поля.
         private void ResizeControl()
@@ -72,7 +98,7 @@ namespace Miner.View
                 {
                     int x = col * CELL_SIZE;
                     int y = row * CELL_SIZE;
-                    ShowCell(field[row, col], x, y);
+                    ShowCell(field.CellAt(row, col), x, y);
                 }
             }
         }
@@ -174,14 +200,7 @@ namespace Miner.View
 
             private set
             {
-                if (value < 0 || value >= field.Height)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-                else
-                {
-                    selectorRow = value;
-                }
+                SetPropertyValue(ref selectorRow, value, v => v >= 0 && v < field.Height);
             }
         }
 
@@ -198,14 +217,24 @@ namespace Miner.View
 
             private set
             {
-                if (value < 0 || value >= field.Width)
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-                else
-                {
-                    selectorCol = value;
-                }
+                SetPropertyValue(ref selectorCol, value, v => v >= 0 && v < field.Width);
+            }
+        }
+
+        // Функция проверки ограничения значения свойства.
+        private delegate bool SatisfiesConstraint(int value);
+
+        // Устанавливает значение свойства поля.
+        private void SetPropertyValue(ref int property,
+            int value, SatisfiesConstraint cFunc)
+        {
+            if (cFunc.Invoke(value))
+            {
+                property = value;
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -217,27 +246,15 @@ namespace Miner.View
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void SetSelectorPosition(int row, int col)
         {
-            selectorRow = row;
-            selectorCol = col;
+            SelectorRow = row;
+            SelectorCol = col;
         }
 
         /// <summary>
-        /// Отображает указатель выбранной клетки на графической поверхности.
+        /// Возвращает или устанавливает true, если указатель
+        /// на выбранную пользователем клетку видим, иначе - false.
         /// </summary>
-        public void ShowSelector()
-        {
-            int x = selectorCol * CELL_SIZE;
-            int y = selectorRow * CELL_SIZE;
-            graphics.DrawRectangle(selectorPen, x, y, CELL_SIZE, CELL_SIZE);
-        }
-
-        /// <summary>
-        /// Скрывает указатель выбранной клетки на графической поверхности.
-        /// </summary>
-        public void HideSelector()
-        {
-            ShowField();
-        }
+        public bool SelectorVisible { get; set; }
 
         #endregion
     }

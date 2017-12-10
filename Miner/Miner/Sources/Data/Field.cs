@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Miner.Math;
 
@@ -7,22 +8,92 @@ namespace Miner.Data
     /// <summary>
     /// Игровое поле.
     /// </summary>
-    public class Field
+    public class Field : IField
     {
-        /// <summary>
-        /// Возвращает ширину поля.
-        /// </summary>
-        public int Width { get; private set; }
+        // Ширина и высота поля.
+        private int width = 0, height = 0;
+
+        // Количество мин на поле.
+        private int numMines = 0;
 
         /// <summary>
-        /// Возвращает высоту поля.
+        /// Возвращает состояние игрового поля.
         /// </summary>
-        public int Height { get; private set; }
+        public FieldState State { get; private set; }
 
         /// <summary>
-        /// Возвращает количество мин на поле.
+        /// Возвращает или устанавливает ширину поля.
         /// </summary>
-        public int NumMines { get; private set; }
+        /// <exception cref="InvalidOperationException"></exception>
+        public int Width
+        {
+            get
+            {
+                return width;
+            }
+
+            set
+            {
+                SetPropertyValue(ref width, value, v => v > 0);
+            }
+        }
+
+        /// <summary>
+        /// Возвращает или устанавливает высоту поля.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        public int Height
+        {
+            get
+            {
+                return height;
+            }
+
+            set
+            {
+                SetPropertyValue(ref height, value, v => v > 0);
+                Resized.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Возвращает или устанавливает число мин на поле.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        public int NumMines
+        {
+            get
+            {
+                return numMines;
+            }
+
+            set
+            {
+                SetPropertyValue(ref numMines, value, v => v <= width * height);
+                Resized.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        // Функция проверки ограничения значения свойства.
+        private delegate bool SatisfiesConstraint(int value);
+
+        // Устанавливает значение свойства поля.
+        private void SetPropertyValue(ref int property,
+            int value, SatisfiesConstraint cFunc)
+        {
+            if (State == FieldState.SomeCellsMarkedOrRevealed)
+            {
+                throw new InvalidOperationException();
+            }
+            else if (!cFunc.Invoke(value))
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+            else
+            {
+                property = value;
+            }
+        }
 
         // Клетки поля.
         private readonly Cell[,] cells;
@@ -37,37 +108,42 @@ namespace Miner.Data
         /// <param name="height">Высота поля.</param>
         /// <param name="numMines">Количество мин на поле.</param>
         /// <param name="randomizer">Генератор случайных чисел для расстановки мин.
-        /// Если <c>null</c>, используется генератор по умолчанию. </param>
+        /// Если null, используется генератор по умолчанию. </param>
         /// <exception cref="OutOfMemoryException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public Field(int width, int height, int numMines, IRandomizer randomizer = null)
         {
-            if (width < 1 || height < 1 || numMines < 1)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-            if (numMines > width * height)
-            {
-                throw new ArgumentOutOfRangeException();
-            }
+            State = FieldState.NotInitialized;
 
-            cells = new Cell[width, height];
+            Resized += (sender, e) => { };
+            Modified += (sender, e) => { };
 
             Width = width;
             Height = height;
             NumMines = numMines;
 
+            cells = new Cell[width, height];
             minesPositionsRandomizer = randomizer ?? new StdRandomizer();
         }
 
         /// <summary>
         /// Выполняет подготовку поля к игре.
         /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
         public void Initialize()
         {
-            ClearCells();
-            PlaceMines();
-            PlaceValues();
+            if (State == FieldState.SomeCellsMarkedOrRevealed)
+            {
+                throw new InvalidOperationException();
+            }
+            else
+            {
+                ClearCells();
+                PlaceMines();
+                PlaceValues();
+                State = FieldState.AllCellsHidden;
+                Modified.Invoke(this, EventArgs.Empty);
+            }
         }
 
         // Удаляет содержимое клеток поля.
@@ -145,9 +221,15 @@ namespace Miner.Data
         /// </summary>
         /// <param name="row">Строка.</param>
         /// <param name="col">Столбец.</param>
+        /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void RevealCell(int row, int col)
         {
+            if (!CellsModificationsAllowed())
+            {
+                throw new InvalidOperationException();
+            }
+
             if (!CellAvailable(row, col))
             {
                 throw new ArgumentOutOfRangeException();
@@ -160,7 +242,6 @@ namespace Miner.Data
             else if (cells[row, col].Object is Mine)
             {
                 RevealAllCells();
-                MinesExploded = true;
             }
             else
             {
@@ -197,6 +278,11 @@ namespace Miner.Data
                 {
                     cells[row, col].State = CellState.Revealed;
                 }
+
+                State = AllMinesMarked ?
+                    FieldState.AllMinesMarked :
+                    FieldState.SomeCellsMarkedOrRevealed;
+                Modified.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -205,9 +291,15 @@ namespace Miner.Data
         /// </summary>
         /// <param name="row">Строка.</param>
         /// <param name="col">Столбец.</param>
+        /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void MarkCell(int row, int col)
         {
+            if (!CellsModificationsAllowed())
+            {
+                throw new InvalidOperationException();
+            }
+
             if (CellAvailable(row, col))
             {
                 switch (cells[row, col].State)
@@ -225,6 +317,11 @@ namespace Miner.Data
             {
                 throw new ArgumentOutOfRangeException();
             }
+
+            State = AllMinesMarked ?
+                FieldState.AllMinesMarked :
+                FieldState.SomeCellsMarkedOrRevealed;
+            Modified.Invoke(this, EventArgs.Empty);
         }
 
         // Проверяет находятся ли координаты в пределах поля.
@@ -236,8 +333,14 @@ namespace Miner.Data
         /// <summary>
         /// Открывает все клетки.
         /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
         public void RevealAllCells()
         {
+            if (!CellsModificationsAllowed())
+            {
+                throw new InvalidOperationException();
+            }
+
             for (int i = 0; i < Height; i++)
             {
                 for (int j = 0; j < Width; j++)
@@ -245,6 +348,9 @@ namespace Miner.Data
                     cells[i, j].State = CellState.Revealed;
                 }
             }
+
+            State = FieldState.AllCellsRevealed;
+            Modified.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -252,24 +358,54 @@ namespace Miner.Data
         /// </summary>
         /// <param name="row">Строка.</param>
         /// <param name="col">Столбец.</param>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public Cell CellAt(int row, int col)
+        {
+            if (State == FieldState.NotInitialized)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!CellAvailable(row, col))
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+
+            return cells[row, col];
+        }
+
+        /// <summary>
+        /// Возвращает клетку поля с указанными координатами.
+        /// </summary>
+        /// <param name="row">Строка.</param>
+        /// <param name="col">Столбец.</param>
+        /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public Cell this[int row, int col]
         {
             get
             {
-                if (!CellAvailable(row, col))
-                {
-                    throw new ArgumentOutOfRangeException();
-                }
-
-                return cells[row, col];
+                return CellAt(row, col);
             }
         }
 
+        // Состояния, недопустимые для изменения состояния клеток поля.
+        private FieldState[] modificationsDisabledStates =
+        {
+            FieldState.NotInitialized, FieldState.AllCellsRevealed, FieldState.AllMinesMarked
+        };
+
+        // Возвращает true, если допустимы изменения состояния клеток поля, иначе - false.
+        private bool CellsModificationsAllowed()
+        {
+            return !modificationsDisabledStates.Contains(State);
+        }
+
         /// <summary>
-        /// Возвращает true если все мины отмечены и клетки с числами открыты, иначе - false.
+        /// Возвращает true, если все мины отмечены и клетки с числами открыты, иначе - false.
         /// </summary>
-        public bool AllMinesMarked
+        private bool AllMinesMarked
         {
             get
             {
@@ -289,8 +425,13 @@ namespace Miner.Data
         }
 
         /// <summary>
-        /// Возвращает true если мины взорвались, иначе - false.
+        /// Возникает, когда размеры поля изменяются.
         /// </summary>
-        public bool MinesExploded { get; private set; }
+        public event FieldResized Resized;
+
+        /// <summary>
+        /// Возникает при изменении клеток поля.
+        /// </summary>
+        public event FieldModified Modified;
     }
 }
