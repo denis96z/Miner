@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Sources\Data\Cell.cs" />
+    <Compile Include="Sources\Data\FieldModification.cs" />
     <Compile Include="Sources\Data\CellObject.cs" />
     <Compile Include="Sources\Data\CellState.cs" />
     <Compile Include="Sources\Data\Field.cs" />
@@ -55,6 +56,8 @@
     <Compile Include="Sources\Data\IField.cs" />
     <Compile Include="Sources\Data\Mine.cs" />
     <Compile Include="Sources\Data\NumberOfMines.cs" />
+    <Compile Include="Sources\Sound\ISoundPlayer.cs" />
+    <Compile Include="Sources\Sound\WaveSoundPlayer.cs" />
     <Compile Include="Sources\View\ControlFieldView.cs" />
     <Compile Include="Sources\View\IFieldView.cs" />
     <Compile Include="Sources\Math\IRandomizer.cs" />
@@ -108,5 +111,6 @@
   <ItemGroup>
     <None Include="Resources\Reveal.wav" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

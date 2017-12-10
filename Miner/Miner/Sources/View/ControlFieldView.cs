@@ -70,7 +70,7 @@ namespace Miner.View
         }
 
         // Обработчик события изменения клеток поля.
-        private void OnFieldModified(object sender, EventArgs e)
+        private void OnFieldModified(object sender, FieldModification modType)
         {
             ShowField();
         }
