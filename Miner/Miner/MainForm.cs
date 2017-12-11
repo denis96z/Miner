@@ -33,7 +33,9 @@ namespace Miner
 
         private void FieldModified(object sender, FieldModType modType)
         {
-            miStartGame.Enabled = field.State != FieldState.SomeCellsMarkedOrRevealed;
+            miStartGame.Enabled = miSetup.Enabled = field.State !=
+                FieldState.SomeCellsMarkedOrRevealed &&
+                field.State != FieldState.AllCellsHidden;
         }
 
         private void miStartGame_Click(object sender, EventArgs e)
@@ -75,6 +77,14 @@ namespace Miner
             {
                 MessageBox.Show(exception.Message, String.Empty,
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void MainForm_Paint(object sender, PaintEventArgs e)
+        {
+            if (field.State != FieldState.NotInitialized)
+            {
+                fieldView.ShowField();
             }
         }
     }
