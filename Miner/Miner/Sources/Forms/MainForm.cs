@@ -6,7 +6,7 @@ using Miner.View;
 using Miner.Input;
 using Miner.Sound;
 
-namespace Miner
+namespace Miner.Forms
 {
     public partial class MainForm : Form
     {

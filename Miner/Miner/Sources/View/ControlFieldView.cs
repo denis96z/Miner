@@ -47,6 +47,7 @@ namespace Miner.View
         /// </summary>
         /// <param name="field">Игровое поле.</param>
         /// <param name="control">Графический контроллер.</param>
+        /// <param name="inputManager">Контроллер пользовательского ввода.</param>
         /// <param name="selectorVisible">Признак: указатель выбранной клетки видим.</param>
         /// <exception cref="ArgumentNullException"></exception>
         public ControlFieldView(IField field, Control control,
@@ -66,6 +67,9 @@ namespace Miner.View
             graphics = control.CreateGraphics();
         }
 
+        /// <summary>
+        /// Уничтожает экземпляр класса.
+        /// </summary>
         ~ControlFieldView()
         {
             field.Resized -= OnFieldResized;

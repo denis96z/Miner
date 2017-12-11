@@ -56,19 +56,19 @@ namespace Miner.Input
             switch (command)
             {
                 case DeviceCommand.MoveUp:
-                    SelectorRow--;
+                    PerformSelectorAction(() => SelectorRow--);
                     break;
 
                 case DeviceCommand.MoveDown:
-                    SelectorRow++;
+                    PerformSelectorAction(() => SelectorRow++);
                     break;
 
                 case DeviceCommand.MoveLeft:
-                    SelectorCol--;
+                    PerformSelectorAction(() => SelectorCol--);
                     break;
 
                 case DeviceCommand.MoveRight:
-                    SelectorCol++;
+                    PerformSelectorAction(() => SelectorCol++);
                     break;
 
                 case DeviceCommand.RevealCell:

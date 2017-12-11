@@ -1,4 +1,4 @@
-﻿namespace Miner
+﻿namespace Miner.Forms
 {
     partial class MainForm
     {

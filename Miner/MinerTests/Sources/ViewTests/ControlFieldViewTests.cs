@@ -25,8 +25,6 @@ namespace MinerTests.ViewTests
             {
                 return 1;
             });
-
-            var instance = new ControlFieldView(field, control);
         }
     }
 }
