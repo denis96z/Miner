@@ -2,7 +2,9 @@
 using System.Drawing;
 using Miner.Properties;
 using System.Windows.Forms;
+
 using Miner.Data;
+using Miner.Input;
 
 namespace Miner.View
 {
@@ -14,7 +16,7 @@ namespace Miner.View
         /// <summary>
         /// Ширина и высота клетки игрового поля.
         /// </summary>
-        public const int CELL_SIZE = 10;
+        public const int CELL_SIZE = 30;
 
         // Игровое поле.
         private readonly IField field;
@@ -26,6 +28,9 @@ namespace Miner.View
         private readonly Control control;
         // Графическая поверхность.
         private readonly Graphics graphics;
+
+        // Контроллер пользовательского ввода.
+        private readonly IInputManager inputManager;
 
         // Изображение мины.
         private readonly Image mineImage = Resources.Mine;
@@ -44,14 +49,19 @@ namespace Miner.View
         /// <param name="control">Графический контроллер.</param>
         /// <param name="selectorVisible">Признак: указатель выбранной клетки видим.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public ControlFieldView(IField field, Control control, bool selectorVisible = true)
+        public ControlFieldView(IField field, Control control,
+            IInputManager inputManager, bool selectorVisible = true)
         {
             this.field = field ?? throw new ArgumentNullException();
             this.control = control ?? throw new ArgumentNullException();
+            this.inputManager = inputManager ?? throw new ArgumentNullException();
 
             ResizeControl();
+            SelectorVisible = selectorVisible;
+
             this.field.Resized += OnFieldResized;
             this.field.Modified += OnFieldModified;
+            this.inputManager.SelectorMoved += OnSelectorMoved;
 
             graphics = control.CreateGraphics();
         }
@@ -59,6 +69,8 @@ namespace Miner.View
         ~ControlFieldView()
         {
             field.Resized -= OnFieldResized;
+            field.Modified -= OnFieldModified;
+            inputManager.SelectorMoved -= OnSelectorMoved;
         }
 
         #region ControlMethods
@@ -70,7 +82,7 @@ namespace Miner.View
         }
 
         // Обработчик события изменения клеток поля.
-        private void OnFieldModified(object sender, FieldModification modType)
+        private void OnFieldModified(object sender, FieldModType modType)
         {
             ShowField();
         }
@@ -100,6 +112,12 @@ namespace Miner.View
                     int y = row * CELL_SIZE;
                     ShowCell(field.CellAt(row, col), x, y);
                 }
+            }
+            if (SelectorVisible)
+            {
+                int x = selectorCol * CELL_SIZE;
+                int y = selectorRow * CELL_SIZE;
+                ShowSelector(x, y);
             }
         }
 
@@ -175,6 +193,12 @@ namespace Miner.View
             graphics.DrawRectangle(Pens.Black, x, y, CELL_SIZE, CELL_SIZE);
         }
 
+        // Отображает указатель выбранной клетки.
+        private void ShowSelector(int x, int y)
+        {
+            graphics.DrawRectangle(selectorPen, x, y, CELL_SIZE, CELL_SIZE);
+        }
+
         /// <summary>
         /// Скрывает отображенное на графической поверхности поле.
         /// </summary>
@@ -248,6 +272,7 @@ namespace Miner.View
         {
             SelectorRow = row;
             SelectorCol = col;
+            ShowField();
         }
 
         /// <summary>
@@ -255,6 +280,12 @@ namespace Miner.View
         /// на выбранную пользователем клетку видим, иначе - false.
         /// </summary>
         public bool SelectorVisible { get; set; }
+
+        // Обработчик события изменения позиции указателя выбранной клетки.
+        private void OnSelectorMoved(object sender, EventArgs e)
+        {
+            SetSelectorPosition(inputManager.SelectorRow, inputManager.SelectorCol);
+        }
 
         #endregion
     }

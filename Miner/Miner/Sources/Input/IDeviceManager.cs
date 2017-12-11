@@ -2,7 +2,7 @@
 
 namespace Miner.Input
 {
-    public interface IDeviceManager
+    public interface IDeviceManager : IDisposable
     {
         event DeviceCommandReceived CommandReceived;
     }

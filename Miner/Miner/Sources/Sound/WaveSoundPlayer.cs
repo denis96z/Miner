@@ -31,6 +31,7 @@ namespace Miner.Sound
         /// <param name="field">Игровое поле.</param>
         public WaveSoundPlayer(IField field)
         {
+            this.field = field;
             this.field.Modified += OnFieldModified;
         }
         
@@ -40,19 +41,22 @@ namespace Miner.Sound
         }
 
         // Обработчик события изменения клеток поля.
-        private void OnFieldModified(object sender, FieldModification modType)
+        private void OnFieldModified(object sender, FieldModType modType)
         {
             switch (modType)
             {
-                case FieldModification.CellRevealed:
+                case FieldModType.Initialized:
+                    break;
+
+                case FieldModType.CellRevealed:
                     PlayCellRevealedSound();
                     break;
 
-                case FieldModification.CellMarked:
+                case FieldModType.CellMarked:
                     PlayCellMarkedSound();
                     break;
 
-                case FieldModification.MinesExploded:
+                case FieldModType.MinesExploded:
                     PlayMinesExplodedSound();
                     break;
 

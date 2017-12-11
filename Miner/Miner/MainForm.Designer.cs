@@ -28,20 +28,87 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.mainMenu = new System.Windows.Forms.MenuStrip();
+            this.играToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.miStartGame = new System.Windows.Forms.ToolStripMenuItem();
+            this.miSetup = new System.Windows.Forms.ToolStripMenuItem();
+            this.miLine1 = new System.Windows.Forms.ToolStripSeparator();
+            this.miExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.mainMenu.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // mainMenu
+            // 
+            this.mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.играToolStripMenuItem});
+            this.mainMenu.Location = new System.Drawing.Point(0, 0);
+            this.mainMenu.Name = "mainMenu";
+            this.mainMenu.Size = new System.Drawing.Size(284, 24);
+            this.mainMenu.TabIndex = 0;
+            this.mainMenu.Text = "mainMenu";
+            // 
+            // играToolStripMenuItem
+            // 
+            this.играToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.miStartGame,
+            this.miSetup,
+            this.miLine1,
+            this.miExit});
+            this.играToolStripMenuItem.Name = "играToolStripMenuItem";
+            this.играToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.играToolStripMenuItem.Text = "Игра";
+            // 
+            // miStartGame
+            // 
+            this.miStartGame.Name = "miStartGame";
+            this.miStartGame.Size = new System.Drawing.Size(152, 22);
+            this.miStartGame.Text = "Новая игра";
+            this.miStartGame.Click += new System.EventHandler(this.miStartGame_Click);
+            // 
+            // miSetup
+            // 
+            this.miSetup.Name = "miSetup";
+            this.miSetup.Size = new System.Drawing.Size(152, 22);
+            this.miSetup.Text = "Настройки";
+            // 
+            // miLine1
+            // 
+            this.miLine1.Name = "miLine1";
+            this.miLine1.Size = new System.Drawing.Size(149, 6);
+            // 
+            // miExit
+            // 
+            this.miExit.Name = "miExit";
+            this.miExit.Size = new System.Drawing.Size(152, 22);
+            this.miExit.Text = "Выход";
+            this.miExit.Click += new System.EventHandler(this.miExit_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
+            this.Controls.Add(this.mainMenu);
+            this.MainMenuStrip = this.mainMenu;
             this.Name = "MainForm";
-            this.Text = "Form1";
+            this.Text = "Сапёр";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainForm_MouseMove);
+            this.mainMenu.ResumeLayout(false);
+            this.mainMenu.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
+
+        private System.Windows.Forms.MenuStrip mainMenu;
+        private System.Windows.Forms.ToolStripMenuItem играToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem miStartGame;
+        private System.Windows.Forms.ToolStripMenuItem miSetup;
+        private System.Windows.Forms.ToolStripSeparator miLine1;
+        private System.Windows.Forms.ToolStripMenuItem miExit;
     }
 }
 

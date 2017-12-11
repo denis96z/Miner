@@ -4,7 +4,7 @@ using SharpDX.DirectInput;
 
 namespace Miner.Input
 {
-    public class JoystickManager
+    public class JoystickManager : IDeviceManager
     {
         private Joystick joystick = null;
         private readonly DirectInput directInput = new DirectInput();
@@ -18,7 +18,7 @@ namespace Miner.Input
         {
             get
             {
-                return Instance;
+                return instance;
             }
         }
 
@@ -34,13 +34,6 @@ namespace Miner.Input
             }).Start();
         }
 
-        ~JoystickManager()
-        {
-            shouldPoll = false;
-            if (joystick?.IsDisposed != true) joystick.Dispose();
-            directInput.Dispose();
-        }
-
         private void PollProcedure()
         {
             try
@@ -50,7 +43,10 @@ namespace Miner.Input
             }
             catch (Exception)
             {
-                if (joystick?.IsDisposed != true) joystick.Dispose();
+                if (joystick != null && !joystick.IsDisposed)
+                {
+                    joystick.Dispose();
+                }
             }
         }
 
@@ -155,6 +151,16 @@ namespace Miner.Input
                     break;
             }
             return command;
+        }
+
+        public void Dispose()
+        {
+            shouldPoll = false;
+            if (joystick != null && !joystick.IsDisposed)
+            {
+                joystick.Dispose();
+            }
+            directInput.Dispose();
         }
 
         public event DeviceCommandReceived CommandReceived;

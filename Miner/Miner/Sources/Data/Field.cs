@@ -92,6 +92,7 @@ namespace Miner.Data
             else
             {
                 property = value;
+                State = FieldState.NotInitialized;
             }
         }
 
@@ -142,7 +143,7 @@ namespace Miner.Data
                 PlaceMines();
                 PlaceValues();
                 State = FieldState.AllCellsHidden;
-                Modified.Invoke(this, EventArgs.Empty);
+                Modified.Invoke(this, FieldModType.Initialized);
             }
         }
 
@@ -282,7 +283,7 @@ namespace Miner.Data
                 State = AllMinesMarked ?
                     FieldState.AllMinesMarked :
                     FieldState.SomeCellsMarkedOrRevealed;
-                Modified.Invoke(this, FieldModification.CellRevealed);
+                Modified.Invoke(this, FieldModType.CellRevealed);
             }
         }
 
@@ -321,7 +322,7 @@ namespace Miner.Data
             State = AllMinesMarked ?
                 FieldState.AllMinesMarked :
                 FieldState.SomeCellsMarkedOrRevealed;
-            Modified.Invoke(this, FieldModification.CellMarked);
+            Modified.Invoke(this, FieldModType.CellMarked);
         }
 
         // Проверяет находятся ли координаты в пределах поля.
@@ -350,7 +351,7 @@ namespace Miner.Data
             }
 
             State = FieldState.AllCellsRevealed;
-            Modified.Invoke(this, FieldModification.MinesExploded);
+            Modified.Invoke(this, FieldModType.MinesExploded);
         }
 
         /// <summary>

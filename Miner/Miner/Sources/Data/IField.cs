@@ -91,5 +91,5 @@ namespace Miner.Data
     /// <summary>
     /// Обработчик события изменения клеток поля.
     /// </summary>
-    public delegate void FieldModified(object sender, FieldModification modType);
+    public delegate void FieldModified(object sender, FieldModType modType);
 }

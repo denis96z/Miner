@@ -54,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Sources\Data\Cell.cs" />
-    <Compile Include="Sources\Data\FieldModification.cs" />
+    <Compile Include="Sources\Data\FieldModType.cs" />
     <Compile Include="Sources\Data\CellObject.cs" />
     <Compile Include="Sources\Data\CellState.cs" />
     <Compile Include="Sources\Data\Field.cs" />
@@ -64,6 +64,8 @@
     <Compile Include="Sources\Data\NumberOfMines.cs" />
     <Compile Include="Sources\Input\DeviceCommand.cs" />
     <Compile Include="Sources\Input\IDeviceManager.cs" />
+    <Compile Include="Sources\Input\IInputManager.cs" />
+    <Compile Include="Sources\Input\InputManager.cs" />
     <Compile Include="Sources\Input\JoystickManager.cs" />
     <Compile Include="Sources\Sound\ISoundPlayer.cs" />
     <Compile Include="Sources\Sound\WaveSoundPlayer.cs" />

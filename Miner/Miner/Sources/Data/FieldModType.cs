@@ -5,8 +5,13 @@ namespace Miner.Data
     /// <summary>
     /// Изменения, произошедшие на игровом поле.
     /// </summary>
-    public enum FieldModification
+    public enum FieldModType
     {
+        /// <summary>
+        /// Поле инициализировано.
+        /// </summary>
+        Initialized,
+
         /// <summary>
         /// Открыта клетка поля.
         /// </summary>
