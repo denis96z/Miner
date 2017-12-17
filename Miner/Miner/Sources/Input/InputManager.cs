@@ -42,12 +42,15 @@ namespace Miner.Input
             this.field = field ?? throw new ArgumentNullException();
             this.control = control ?? throw new ArgumentNullException();
 
+            this.field.Modified += OnFieldModified;
+
             SelectorMoved += (sender, e) => { };
             JoystickManager.Instance.CommandReceived += DeviceCommandReceived;
         }
 
         ~InputManager()
         {
+            field.Modified -= OnFieldModified;
             JoystickManager.Instance.CommandReceived -= DeviceCommandReceived;
         }
 
@@ -100,6 +103,18 @@ namespace Miner.Input
                 case FieldState.SomeCellsMarkedOrRevealed:
                     action.Invoke();
                     break;
+            }
+        }
+
+        private void OnFieldModified(object sender, FieldModType modType)
+        {
+            if (modType == FieldModType.Initialized)
+            {
+                PerformSelectorAction(() =>
+                {
+                    SelectorRow = 0;
+                    SelectorCol = 0;
+                });
             }
         }
 

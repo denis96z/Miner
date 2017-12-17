@@ -31,7 +31,7 @@
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.играToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.miStartGame = new System.Windows.Forms.ToolStripMenuItem();
-            this.miSetup = new System.Windows.Forms.ToolStripMenuItem();
+            this.miOptions = new System.Windows.Forms.ToolStripMenuItem();
             this.miLine1 = new System.Windows.Forms.ToolStripSeparator();
             this.miExit = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
@@ -51,7 +51,7 @@
             // 
             this.играToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.miStartGame,
-            this.miSetup,
+            this.miOptions,
             this.miLine1,
             this.miExit});
             this.играToolStripMenuItem.Name = "играToolStripMenuItem";
@@ -61,25 +61,26 @@
             // miStartGame
             // 
             this.miStartGame.Name = "miStartGame";
-            this.miStartGame.Size = new System.Drawing.Size(152, 22);
+            this.miStartGame.Size = new System.Drawing.Size(211, 22);
             this.miStartGame.Text = "Новая игра";
             this.miStartGame.Click += new System.EventHandler(this.miStartGame_Click);
             // 
-            // miSetup
+            // miOptions
             // 
-            this.miSetup.Name = "miSetup";
-            this.miSetup.Size = new System.Drawing.Size(152, 22);
-            this.miSetup.Text = "Настройки";
+            this.miOptions.Name = "miOptions";
+            this.miOptions.Size = new System.Drawing.Size(211, 22);
+            this.miOptions.Text = "Настройки";
+            this.miOptions.Click += new System.EventHandler(this.miOptions_Click);
             // 
             // miLine1
             // 
             this.miLine1.Name = "miLine1";
-            this.miLine1.Size = new System.Drawing.Size(149, 6);
+            this.miLine1.Size = new System.Drawing.Size(208, 6);
             // 
             // miExit
             // 
             this.miExit.Name = "miExit";
-            this.miExit.Size = new System.Drawing.Size(152, 22);
+            this.miExit.Size = new System.Drawing.Size(211, 22);
             this.miExit.Text = "Выход";
             this.miExit.Click += new System.EventHandler(this.miExit_Click);
             // 
@@ -110,7 +111,7 @@
         private System.Windows.Forms.MenuStrip mainMenu;
         private System.Windows.Forms.ToolStripMenuItem играToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem miStartGame;
-        private System.Windows.Forms.ToolStripMenuItem miSetup;
+        private System.Windows.Forms.ToolStripMenuItem miOptions;
         private System.Windows.Forms.ToolStripSeparator miLine1;
         private System.Windows.Forms.ToolStripMenuItem miExit;
     }

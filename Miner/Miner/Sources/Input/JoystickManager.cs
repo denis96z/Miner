@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using SharpDX;
 using SharpDX.DirectInput;
 
 namespace Miner.Input
@@ -41,7 +42,7 @@ namespace Miner.Input
                 FindJoystick();
                 PollJoystick();
             }
-            catch (Exception)
+            catch (SharpDXException)
             {
                 if (joystick != null && !joystick.IsDisposed)
                 {

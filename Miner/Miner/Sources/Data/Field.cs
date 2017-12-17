@@ -155,6 +155,7 @@ namespace Miner.Data
                 for (int j = 0; j < Width; j++)
                 {
                     cells[i, j].Object = null;
+                    cells[i, j].State = CellState.Hidden;
                 }
             }
         }

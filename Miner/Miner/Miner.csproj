@@ -33,6 +33,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Devart.Data, Version=5.0.1823.0, Culture=neutral, PublicKeyToken=09af7300eec23701, processorArchitecture=MSIL">
+      <HintPath>..\packages\dotConnect.Express.for.PostgreSQL.7.10.1031\lib\Devart.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Devart.Data.PostgreSql, Version=7.10.1031.0, Culture=neutral, PublicKeyToken=09af7300eec23701, processorArchitecture=MSIL">
+      <HintPath>..\packages\dotConnect.Express.for.PostgreSQL.7.10.1031\lib\Devart.Data.PostgreSql.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
     </Reference>
@@ -52,6 +58,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Sources\Database\Authentication.cs" />
+    <Compile Include="Sources\Database\IDatabaseManager.cs" />
+    <Compile Include="Sources\Database\PgSqlManager.cs" />
     <Compile Include="Sources\Data\Cell.cs" />
     <Compile Include="Sources\Data\FieldModType.cs" />
     <Compile Include="Sources\Data\CellObject.cs" />
@@ -61,6 +70,25 @@
     <Compile Include="Sources\Data\IField.cs" />
     <Compile Include="Sources\Data\Mine.cs" />
     <Compile Include="Sources\Data\NumberOfMines.cs" />
+    <Compile Include="Sources\Forms\MinerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sources\Forms\MinerForm.Designer.cs">
+      <DependentUpon>MinerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sources\Forms\OptionsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sources\Forms\OptionsForm.Designer.cs">
+      <DependentUpon>OptionsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sources\Forms\SubmitResultForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Sources\Forms\SubmitResultForm.Designer.cs">
+      <DependentUpon>SubmitResultForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sources\Game\GameResult.cs" />
     <Compile Include="Sources\Input\DeviceCommand.cs" />
     <Compile Include="Sources\Input\IDeviceManager.cs" />
     <Compile Include="Sources\Input\IInputManager.cs" />
@@ -68,6 +96,8 @@
     <Compile Include="Sources\Input\JoystickManager.cs" />
     <Compile Include="Sources\Sound\ISoundPlayer.cs" />
     <Compile Include="Sources\Sound\WaveSoundPlayer.cs" />
+    <Compile Include="Sources\Time\IStopwatch.cs" />
+    <Compile Include="Sources\Time\StdStopwatch.cs" />
     <Compile Include="Sources\View\ControlFieldView.cs" />
     <Compile Include="Sources\View\IFieldView.cs" />
     <Compile Include="Sources\Math\IRandomizer.cs" />
@@ -93,6 +123,15 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="Sources\Forms\MinerForm.resx">
+      <DependentUpon>MinerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sources\Forms\OptionsForm.resx">
+      <DependentUpon>OptionsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sources\Forms\SubmitResultForm.resx">
+      <DependentUpon>SubmitResultForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
