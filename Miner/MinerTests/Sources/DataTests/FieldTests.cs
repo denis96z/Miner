@@ -196,9 +196,17 @@ namespace MinerTests.DataTests
         [Test]
         public void TestInitialize_Field_FieldModTypeInitialized()
         {
+            bool eventOccured = false;
             var field = new Field(1, 1, 1);
 
+            field.Modified += delegate
+            {
+                eventOccured = true;
+            };
+            field.Initialize();
+            Assert.AreEqual(true, eventOccured);
         } 
+
         /*
         [Test]
         public void TestRevealAllCells_AllCellsRevealed()
