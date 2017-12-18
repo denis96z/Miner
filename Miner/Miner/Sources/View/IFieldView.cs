@@ -1,5 +1,4 @@
 ﻿using System;
-using Miner.Data;
 
 namespace Miner.View
 {

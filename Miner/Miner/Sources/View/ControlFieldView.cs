@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Drawing;
-using Miner.Properties;
-using System.Windows.Forms;
 
 using Miner.Data;
 using Miner.Input;
@@ -13,58 +10,39 @@ namespace Miner.View
     /// </summary>
     public class ControlFieldView : IFieldView
     {
-        /// <summary>
-        /// Ширина и высота клетки игрового поля.
-        /// </summary>
-        public const int CELL_SIZE = 30;
-
         // Игровое поле.
         private readonly IField field;
+
+        // Адаптер графического контроллера.
+        private readonly IControlViewAdapter controlViewAdapter;
 
         // Позиция указателя выбранной клетки.
         private int selectorRow = 0, selectorCol = 0;
 
-        // Графический контроллер.
-        private readonly Control control;
-        // Графическая поверхность.
-        private readonly Graphics graphics;
-
         // Контроллер пользовательского ввода.
         private readonly IInputManager inputManager;
-
-        // Изображение мины.
-        private readonly Image mineImage = Resources.Mine;
-        // Изображение отметки возможной мины.
-        private readonly Image markImage = Resources.Flag;
-
-        // Шрифт цифр.
-        private readonly Font valueFont = new Font("Arial", CELL_SIZE / 2);
-        // Линия указателя выбранной клетки.
-        private readonly Pen selectorPen = new Pen(Color.DarkGreen, 2);
 
         /// <summary>
         /// Создает экземпляр класса.
         /// </summary>
         /// <param name="field">Игровое поле.</param>
-        /// <param name="control">Графический контроллер.</param>
+        /// <param name="controlAdapter">Контроллер графического адаптера.</param>
         /// <param name="inputManager">Контроллер пользовательского ввода.</param>
         /// <param name="selectorVisible">Признак: указатель выбранной клетки видим.</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public ControlFieldView(IField field, Control control,
+        public ControlFieldView(IField field, IControlViewAdapter controlAdapter,
             IInputManager inputManager, bool selectorVisible = true)
         {
             this.field = field ?? throw new ArgumentNullException();
-            this.control = control ?? throw new ArgumentNullException();
+            this.controlViewAdapter = controlAdapter ?? throw new ArgumentNullException();
             this.inputManager = inputManager ?? throw new ArgumentNullException();
 
-            ResizeControl();
+            controlAdapter.ResizeControl(field.Width, field.Height);
             SelectorVisible = selectorVisible;
 
             this.field.Resized += OnFieldResized;
             this.field.Modified += OnFieldModified;
             this.inputManager.SelectorMoved += OnSelectorMoved;
-
-            graphics = control.CreateGraphics();
         }
 
         /// <summary>
@@ -82,21 +60,13 @@ namespace Miner.View
         // Обработчик события изменения размеров поля.
         private void OnFieldResized(object sender, EventArgs e)
         {
-            ResizeControl();
+            controlViewAdapter.ResizeControl(field.Width, field.Height);
         }
 
         // Обработчик события изменения клеток поля.
         private void OnFieldModified(object sender, FieldModType modType)
         {
             ShowField();
-        }
-
-        // Масштабирует графический контроллер для отображения поля.
-        private void ResizeControl()
-        {
-            int controlWidth = CELL_SIZE * field.Width;
-            int controlHeight = CELL_SIZE * field.Height;
-            control.ClientSize = new Size(controlWidth, controlHeight);
         }
 
         #endregion
@@ -112,16 +82,12 @@ namespace Miner.View
             {
                 for (int col = 0; col < field.Width; col++)
                 {
-                    int x = col * CELL_SIZE;
-                    int y = row * CELL_SIZE;
-                    ShowCell(field.CellAt(row, col), x, y);
+                    ShowCell(field.CellAt(row, col), row, col);
                 }
             }
             if (SelectorVisible)
             {
-                int x = selectorCol * CELL_SIZE;
-                int y = selectorRow * CELL_SIZE;
-                ShowSelector(x, y);
+                controlViewAdapter.DrawSelector(SelectorRow, SelectorCol);
             }
         }
 
@@ -148,32 +114,28 @@ namespace Miner.View
         }
 
         // Отображает скрытую клетку.
-        private void ShowHiddenCell(int x, int y)
+        private void ShowHiddenCell(int row, int col)
         {
-            graphics.FillRectangle(Brushes.DarkGray,
-                x, y, CELL_SIZE, CELL_SIZE);
-            graphics.DrawRectangle(Pens.Black,
-                x, y, CELL_SIZE, CELL_SIZE);
+            controlViewAdapter.DrawHiddenCell(row, col);
         }
 
         // Отображает отмеченную клетку.
-        private void ShowMarkedCell(int x, int y)
+        private void ShowMarkedCell(int row, int col)
         {
-            graphics.DrawImage(markImage, x, y, CELL_SIZE, CELL_SIZE);
-            graphics.DrawRectangle(Pens.Black, x, y, CELL_SIZE, CELL_SIZE);
+            controlViewAdapter.DrawMarkedCell(row, col);
         }
 
         // Отображает открытую клетку.
-        private void ShowRevealedCell(Cell cell, int x, int y)
+        private void ShowRevealedCell(Cell cell, int row, int col)
         {
             if (cell.Object is Mine)
-            {
-                ShowMinedCell(x, y);
+            { 
+                controlViewAdapter.DrawMinedCell(row, col);
             }
             else if (cell.Object is NumberOfMines)
             {
                 var numberOfMines = (NumberOfMines)cell.Object;
-                ShowValueCell(numberOfMines.Value, x, y);
+                controlViewAdapter.DrawValueCell(numberOfMines.Value, row, col);
             }
             else
             {
@@ -181,26 +143,10 @@ namespace Miner.View
             }
         }
 
-        // Отображает открытую клетку с миной.
-        private void ShowMinedCell(int x, int y)
-        {
-            graphics.DrawImage(mineImage, x, y, CELL_SIZE, CELL_SIZE);
-            graphics.DrawRectangle(Pens.Black, x, y, CELL_SIZE, CELL_SIZE);
-        }
-
-        // Отображает открытую клетку с числом мин, расположенных рядом.
-        private void ShowValueCell(int value, int x, int y)
-        {
-            graphics.FillRectangle(Brushes.White, x, y, CELL_SIZE, CELL_SIZE);
-            graphics.DrawString(value != 0 ? value.ToString() : String.Empty,
-                valueFont, Brushes.Green, x + 1, y + 1);
-            graphics.DrawRectangle(Pens.Black, x, y, CELL_SIZE, CELL_SIZE);
-        }
-
         // Отображает указатель выбранной клетки.
-        private void ShowSelector(int x, int y)
+        private void ShowSelector(int row, int col)
         {
-            graphics.DrawRectangle(selectorPen, x, y, CELL_SIZE, CELL_SIZE);
+            controlViewAdapter.DrawSelector(row, col);
         }
 
         /// <summary>
@@ -208,7 +154,7 @@ namespace Miner.View
         /// </summary>
         public void HideField()
         {
-            graphics.Clear(Color.Transparent);
+            controlViewAdapter.ClearGraphics();
         }
 
         #endregion

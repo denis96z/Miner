@@ -99,6 +99,8 @@
     <Compile Include="Sources\Time\IStopwatch.cs" />
     <Compile Include="Sources\Time\StdStopwatch.cs" />
     <Compile Include="Sources\View\ControlFieldView.cs" />
+    <Compile Include="Sources\View\ControlViewAdapter.cs" />
+    <Compile Include="Sources\View\IControlViewAdapter.cs" />
     <Compile Include="Sources\View\IFieldView.cs" />
     <Compile Include="Sources\Math\IRandomizer.cs" />
     <Compile Include="Sources\Forms\MainForm.cs">

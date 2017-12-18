@@ -27,7 +27,8 @@ namespace Miner.Forms
 
             field = new Field(10, 10, 10);
             inputManager = new InputManager(field, this);
-            fieldView = new ControlFieldView(field, this, inputManager);
+            fieldView = new ControlFieldView(field,
+                new ControlViewAdapter(this), inputManager);
             soundPlayer = new WaveSoundPlayer(field);
             stopwatch = new StdStopwatch();
             field.Modified += FieldModified;
