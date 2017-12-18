@@ -260,7 +260,7 @@ namespace MinerTests.DataTests
             Assert.IsTrue(eventOccured);
         }
         
-        /*
+        
         [TestCase(-1, 0)]
         [TestCase(0, -1)]
         [TestCase(1, 0)]
@@ -272,6 +272,7 @@ namespace MinerTests.DataTests
             Assert.Throws<ArgumentOutOfRangeException>(() => field.MarkCell(row, col));
         }
 
+        
         [Test]
         public void TestMarkCell_CellsOfField2x2Hidden_CellMarked()
         {
@@ -282,12 +283,14 @@ namespace MinerTests.DataTests
             Assert.AreEqual(CellState.Marked, field[0, 0].State);
         }
 
+        
         [Test]
         public void TestMarkCell_CellsOfField2x2Revealed_CellStateNotChanged()
         {
-            Field field = new Field(2, 2, 1);
+            var field = new FakeField(2, 2, 1);
             field.Initialize();
-            field.RevealAllCells();
+            field.RevealCell(0, 0);
+            field.SetState(FieldState.SomeCellsMarkedOrRevealed);
 
             var previousState = field[0, 0].State;
             field.MarkCell(0, 0);
@@ -295,6 +298,7 @@ namespace MinerTests.DataTests
             Assert.AreEqual(previousState, field[0, 0].State);
         }
 
+        
         [Test]
         public void TestMarkCell_CellsOfField2x2HiddedMethodCalled2Times_CellStillHidden()
         {
@@ -307,6 +311,7 @@ namespace MinerTests.DataTests
             Assert.AreEqual(CellState.Hidden, field[0, 0].State);
         }
 
+        
         [TestCase(0, 0)]
         public void TestRevealCell_ValidArgumentsForField1x1_NoException(int row, int col)
         {
@@ -315,6 +320,7 @@ namespace MinerTests.DataTests
             field.RevealCell(row, col);
         }
 
+        
         [TestCase(-1, 0)]
         [TestCase(0, -1)]
         [TestCase(1, 0)]
@@ -326,6 +332,7 @@ namespace MinerTests.DataTests
             Assert.Throws<ArgumentOutOfRangeException>(() => field.RevealCell(row, col));
         }
 
+        
         [Test]
         public void TestRevealCell_OneCellRevealed()
         {
@@ -348,6 +355,7 @@ namespace MinerTests.DataTests
             Assert.AreEqual(CellState.Revealed, field[1, 1].State);
         }
 
+        /*
         [Test]
         public void TestRevealCell_TriedToRevealMine_AllCellsRevealed()
         {
