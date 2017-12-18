@@ -74,7 +74,7 @@ namespace MinerTests.DataTests
         [TestCase(2, 2, 1, -1)]
         [TestCase(2, 2, 2, 1)]
         [TestCase(2, 2, 1, 2)]
-        public void TestInitialize_RandomValueOutOfRange(int width, int height, int fakeRow, int fakeCol)
+        public void TestInitialize_RandomValueOutOfRange_Throws_Exception(int width, int height, int fakeRow, int fakeCol)
         {
             var fakeRandomizer = Substitute.For<IRandomizer>();
             bool isRow = false;
@@ -88,7 +88,7 @@ namespace MinerTests.DataTests
             Assert.Throws<ArgumentOutOfRangeException>(() => field.Initialize());
         }
 
-        /*
+      
         [TestCase(-1, 0)]
         [TestCase(0, -1)]
         [TestCase(1, 0)]
@@ -104,6 +104,28 @@ namespace MinerTests.DataTests
             });
         }
 
+        [TestCase(2,2,2)]
+        public void TestInitialize_PlaceIncorrectNumberOfMines(int width, int height, int numMines)
+        {
+            var field = new Field(width, height, 1);
+            field.Initialize();
+            int countOfMines = 0;
+
+            for(int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    if (field.CellAt(i,j).Object is Mine)
+                    {
+                        countOfMines++;
+                    }
+                }
+            }
+
+            Assert.AreEqual(numMines, countOfMines);
+        }
+
+        /*
         [Test]
         public void TestInitialize_RandomizerChoosesTheSameCellTwice()
         {
@@ -120,7 +142,8 @@ namespace MinerTests.DataTests
             var field = new Field(2, 2, numMines, fakeRandomizer);
             field.Initialize();
         }
-
+        
+        
         [TestCase(2, 2, 2)]
         public void TestInitialize_AllMinesPlaced(int width, int height, int numMines)
         {
