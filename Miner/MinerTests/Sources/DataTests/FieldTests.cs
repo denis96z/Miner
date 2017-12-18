@@ -107,7 +107,7 @@ namespace MinerTests.DataTests
         [TestCase(2,2,2)]
         public void TestInitialize_PlaceIncorrectNumberOfMines(int width, int height, int numMines)
         {
-            var field = new Field(width, height, 1);
+            var field = new Field(width, height, numMines);
             field.Initialize();
             int countOfMines = 0;
 
@@ -125,7 +125,7 @@ namespace MinerTests.DataTests
             Assert.AreEqual(numMines, countOfMines);
         }
 
-        /*
+        
         [Test]
         public void TestInitialize_RandomizerChoosesTheSameCellTwice()
         {
@@ -193,6 +193,13 @@ namespace MinerTests.DataTests
             Assert.AreEqual(expectedValue, numberOfMines.Value);
         }
 
+        [Test]
+        public void TestInitialize_Field_FieldModTypeInitialized()
+        {
+            var field = new Field(1, 1, 1);
+
+        } 
+        /*
         [Test]
         public void TestRevealAllCells_AllCellsRevealed()
         {
