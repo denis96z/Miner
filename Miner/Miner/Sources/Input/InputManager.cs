@@ -12,7 +12,7 @@ namespace Miner.Input
         {
             get => selectorRow;
 
-            set
+            private set
             {
                 if (value >= 0 && value < field.Height)
                 {
@@ -25,7 +25,7 @@ namespace Miner.Input
         {
             get => selectorCol;
 
-            set
+            private set
             {
                 if (value >= 0 && value < field.Width)
                 {
@@ -37,6 +37,9 @@ namespace Miner.Input
         private readonly IField field;
         private readonly Control control;
 
+        protected readonly IDeviceManager joystickManager =
+            JoystickManager.Instance;
+
         public InputManager(IField field, Control control)
         {
             this.field = field ?? throw new ArgumentNullException();
@@ -45,13 +48,13 @@ namespace Miner.Input
             this.field.Modified += OnFieldModified;
 
             SelectorMoved += (sender, e) => { };
-            JoystickManager.Instance.CommandReceived += DeviceCommandReceived;
+            joystickManager.CommandReceived += DeviceCommandReceived;
         }
 
         ~InputManager()
         {
             field.Modified -= OnFieldModified;
-            JoystickManager.Instance.CommandReceived -= DeviceCommandReceived;
+            joystickManager.CommandReceived -= DeviceCommandReceived;
         }
 
         private void DeviceCommandReceived(object sender, DeviceCommand command)
