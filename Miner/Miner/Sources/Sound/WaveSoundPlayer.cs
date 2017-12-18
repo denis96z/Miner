@@ -8,7 +8,7 @@ namespace Miner.Sound
     /// <summary>
     /// Плеер звуковых эффектов игры.
     /// </summary>
-    class WaveSoundPlayer : ISoundPlayer
+    public class WaveSoundPlayer : ISoundPlayer
     {
         // Встроенный плеер для звука открытия клетки.
         private readonly SoundPlayer cellRevealedPlayer =

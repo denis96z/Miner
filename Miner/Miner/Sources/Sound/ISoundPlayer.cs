@@ -5,7 +5,7 @@ namespace Miner.Sound
     /// <summary>
     /// Плеер звуковых эффектов игры.
     /// </summary>
-    interface ISoundPlayer
+    public interface ISoundPlayer
     {
         /// <summary>
         /// Воспроизводит звук открытия клетки игрового поля.
