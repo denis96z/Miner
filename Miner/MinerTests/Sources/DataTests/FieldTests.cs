@@ -207,7 +207,7 @@ namespace MinerTests.DataTests
             Assert.IsTrue(eventOccured);
         } 
 
-        /*
+       
         [Test]
         public void TestRevealAllCells_AllCellsRevealed()
         {
@@ -224,6 +224,20 @@ namespace MinerTests.DataTests
             }
         }
 
+        [Test]
+        public void TestRevealAllCells_ModifiedEventRaised()
+        {
+            var field = new Field(2, 2, 2);
+            field.Initialize();
+            bool eventOccured = false;
+            field.Modified += delegate
+            {
+                eventOccured = true;
+            };
+            field.RevealAllCells();
+            Assert.IsTrue(eventOccured);
+        }
+
         [TestCase(0, 0)]
         public void TestMarkCell_ValidArgumentsForField1x1_NoException(int row, int col)
         {
@@ -232,6 +246,21 @@ namespace MinerTests.DataTests
             field.MarkCell(row, col);
         }
 
+        [Test]
+        public void TestMarkCell_ModifiedEventRaised()
+        {
+            var field = new Field(2, 2, 2);
+            field.Initialize();
+            bool eventOccured = false;
+            field.Modified += delegate
+            {
+                eventOccured = true;
+            };
+            field.MarkCell(0,0);
+            Assert.IsTrue(eventOccured);
+        }
+        
+        /*
         [TestCase(-1, 0)]
         [TestCase(0, -1)]
         [TestCase(1, 0)]
