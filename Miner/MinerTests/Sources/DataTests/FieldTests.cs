@@ -204,7 +204,7 @@ namespace MinerTests.DataTests
                 eventOccured = true;
             };
             field.Initialize();
-            Assert.AreEqual(true, eventOccured);
+            Assert.IsTrue(eventOccured);
         } 
 
         /*
