@@ -10,7 +10,7 @@ namespace MinerTests.DataTests
     [TestFixture]
     public class FieldTests
     {
-        /*[TestCase(1, 1, 1)]
+        [TestCase(1, 1, 1)]
         public void TestConstructor_ValidArguments_ObjectCreated(int width,
             int height, int numMines)
         {
@@ -18,6 +18,7 @@ namespace MinerTests.DataTests
             Assert.AreEqual(width, field.Width);
             Assert.AreEqual(height, field.Height);
             Assert.AreEqual(numMines, field.NumMines);
+            Assert.AreEqual(FieldState.NotInitialized, field.State);
         }
 
         [TestCase(0, 1, 1)]
@@ -31,6 +32,27 @@ namespace MinerTests.DataTests
             {
                 var field = new Field(width, height, numMines);
             });
+        }
+
+        private class FakeField : Field
+        {
+            public FakeField(int width, int height, int numMines) : base(width, height, numMines)
+            {
+                // NOP
+            }
+
+            public void SetState(FieldState state)
+            {
+                State = state;
+            }
+        }
+
+        [TestCase(FieldState.SomeCellsMarkedOrRevealed)]
+        public void TestInitialize_InvalidState_ThrowsException(FieldState state)
+        {
+            var field = new FakeField(1,1,1);
+            field.SetState(state);
+            Assert.Throws<InvalidOperationException>(() => field.Initialize());
         }
 
         [Test]
@@ -48,6 +70,25 @@ namespace MinerTests.DataTests
             }
         }
 
+        [TestCase(2, 2, -1, 1)]
+        [TestCase(2, 2, 1, -1)]
+        [TestCase(2, 2, 2, 1)]
+        [TestCase(2, 2, 1, 2)]
+        public void TestInitialize_RandomValueOutOfRange(int width, int height, int fakeRow, int fakeCol)
+        {
+            var fakeRandomizer = Substitute.For<IRandomizer>();
+            bool isRow = false;
+            fakeRandomizer.GetValue(Arg.Any<int>(), Arg.Any<int>()).Returns(info => 
+            {
+                isRow = !isRow;
+                return isRow ? fakeRow : fakeCol;
+            });
+
+            var field = new Field(width, height, 1, fakeRandomizer);
+            Assert.Throws<ArgumentOutOfRangeException>(() => field.Initialize());
+        }
+
+        /*
         [TestCase(-1, 0)]
         [TestCase(0, -1)]
         [TestCase(1, 0)]

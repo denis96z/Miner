@@ -19,7 +19,7 @@ namespace Miner.Data
         /// <summary>
         /// Возвращает состояние игрового поля.
         /// </summary>
-        public FieldState State { get; private set; }
+        public FieldState State { get; protected set; }
 
         /// <summary>
         /// Возвращает или устанавливает ширину поля.
@@ -35,6 +35,7 @@ namespace Miner.Data
             set
             {
                 SetPropertyValue(ref width, value, v => v > 0);
+                Resized.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -69,8 +70,7 @@ namespace Miner.Data
 
             set
             {
-                SetPropertyValue(ref numMines, value, v => v <= width * height);
-                Resized.Invoke(this, EventArgs.Empty);
+                SetPropertyValue(ref numMines, value, v => v > 0 && v <= width * height);
             }
         }
 
@@ -167,7 +167,16 @@ namespace Miner.Data
             while (mCounter != 0)
             {
                 int row = minesPositionsRandomizer.GetValue(0, Height - 1);
+                if(row < 0 || row >= Height)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+
                 int col = minesPositionsRandomizer.GetValue(0, Width - 1);
+                if (col < 0 || col >= Width)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
 
                 if (cells[row, col].Object == null)
                 {
