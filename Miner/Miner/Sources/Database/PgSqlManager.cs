@@ -94,7 +94,7 @@ namespace Miner.Database
         }
 
         // Выполняет запрос к базе данных.
-        private void ExecuteNonQuery(string commandText)
+        protected void ExecuteNonQuery(string commandText)
         {
             var command = new PgSqlCommand(commandText, _connection);
             _connection.Open();
