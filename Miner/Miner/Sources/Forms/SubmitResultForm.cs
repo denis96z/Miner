@@ -12,7 +12,7 @@ namespace Miner.Forms
         public int? Time { get; set; } = null;
         public GameResult? Result { get; set; } = null;
 
-        private IDatabaseManager databaseManager = new PgSqlManager();
+        private IDatabaseManager _databaseManager = new PgSqlManager();
 
         public SubmitResultForm()
         {
@@ -33,7 +33,7 @@ namespace Miner.Forms
             InvokeAction(() =>
             {
                 CheckLoginPassword();
-                databaseManager.Register(tbLogin.Text, tbPassword.Text);
+                _databaseManager.Register(tbLogin.Text, tbPassword.Text);
             });
         }
 
@@ -48,7 +48,7 @@ namespace Miner.Forms
             InvokeAction(() =>
             {
                 CheckLoginPassword();
-                databaseManager.SubmitResult(tbLogin.Text,
+                _databaseManager.SubmitResult(tbLogin.Text,
                     tbPassword.Text, (GameResult)Result, (int)Time);
 
                 ClearData();

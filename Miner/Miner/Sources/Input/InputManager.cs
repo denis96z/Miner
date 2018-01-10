@@ -6,55 +6,55 @@ namespace Miner.Input
 {
     public class InputManager : IInputManager
     {
-        private int selectorRow = 0, selectorCol = 0;
+        private int _selectorRow = 0, _selectorCol = 0;
 
         public int SelectorRow
         {
-            get => selectorRow;
+            get => _selectorRow;
 
             private set
             {
-                if (value >= 0 && value < field.Height)
+                if (value >= 0 && value < _field.Height)
                 {
-                    selectorRow = value;
+                    _selectorRow = value;
                 }
             }
         }
 
         public int SelectorCol
         {
-            get => selectorCol;
+            get => _selectorCol;
 
             private set
             {
-                if (value >= 0 && value < field.Width)
+                if (value >= 0 && value < _field.Width)
                 {
-                    selectorCol = value;
+                    _selectorCol = value;
                 }
             }
         }
 
-        private readonly IField field;
-        private readonly Control control;
+        private readonly IField _field;
+        private readonly Control _control;
 
-        protected readonly IDeviceManager joystickManager =
-            JoystickManager.Instance;
+        protected readonly IDeviceManager JoystickManager =
+            Input.JoystickManager.Instance;
 
         public InputManager(IField field, Control control)
         {
-            this.field = field ?? throw new ArgumentNullException();
-            this.control = control ?? throw new ArgumentNullException();
+            this._field = field ?? throw new ArgumentNullException();
+            this._control = control ?? throw new ArgumentNullException();
 
-            this.field.Modified += OnFieldModified;
+            this._field.Modified += OnFieldModified;
 
             SelectorMoved += (sender, e) => { };
-            joystickManager.CommandReceived += DeviceCommandReceived;
+            JoystickManager.CommandReceived += DeviceCommandReceived;
         }
 
         ~InputManager()
         {
-            field.Modified -= OnFieldModified;
-            joystickManager.CommandReceived -= DeviceCommandReceived;
+            _field.Modified -= OnFieldModified;
+            JoystickManager.CommandReceived -= DeviceCommandReceived;
         }
 
         private void DeviceCommandReceived(object sender, DeviceCommand command)
@@ -78,13 +78,13 @@ namespace Miner.Input
                     break;
 
                 case DeviceCommand.RevealCell:
-                    PerformFieldAction(() => field
-                        .RevealCell(selectorRow, selectorCol));
+                    PerformFieldAction(() => _field
+                        .RevealCell(_selectorRow, _selectorCol));
                     break;
 
                 case DeviceCommand.MarkCell:
-                    PerformFieldAction(() => field
-                        .MarkCell(selectorRow, selectorCol));
+                    PerformFieldAction(() => _field
+                        .MarkCell(_selectorRow, _selectorCol));
                     break;
 
                 default:
@@ -100,7 +100,7 @@ namespace Miner.Input
 
         private void PerformFieldAction(Action action)
         {
-            switch (field.State)
+            switch (_field.State)
             {
                 case FieldState.AllCellsHidden:
                 case FieldState.SomeCellsMarkedOrRevealed:

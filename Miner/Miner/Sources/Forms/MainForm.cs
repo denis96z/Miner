@@ -12,38 +12,38 @@ namespace Miner.Forms
 {
     public partial class MainForm : MinerForm
     {
-        private readonly IField field;
-        private readonly IFieldView fieldView;
-        private readonly IInputManager inputManager;
-        private readonly ISoundPlayer soundPlayer;
-        private readonly IStopwatch stopwatch;
+        private readonly IField _field;
+        private readonly IFieldView _fieldView;
+        private readonly IInputManager _inputManager;
+        private readonly ISoundPlayer _soundPlayer;
+        private readonly IStopwatch _stopwatch;
 
-        private OptionsForm optionsForm = new OptionsForm();
-        private SubmitResultForm submitResultForm = new SubmitResultForm();
+        private OptionsForm _optionsForm = new OptionsForm();
+        private SubmitResultForm _submitResultForm = new SubmitResultForm();
 
         public MainForm()
         {
             InitializeComponent();
 
-            field = new Field(10, 10, 10);
-            inputManager = new InputManager(field, this);
-            fieldView = new ControlFieldView(field,
-                new ControlViewAdapter(this), inputManager);
-            soundPlayer = new WaveSoundPlayer(field);
-            stopwatch = new StdStopwatch();
-            field.Modified += FieldModified;
+            _field = new Field(10, 10, 10);
+            _inputManager = new InputManager(_field, this);
+            _fieldView = new ControlFieldView(_field,
+                new ControlViewAdapter(this), _inputManager);
+            _soundPlayer = new WaveSoundPlayer(_field);
+            _stopwatch = new StdStopwatch();
+            _field.Modified += FieldModified;
         }
 
         ~MainForm()
         {
-            field.Modified -= FieldModified;
+            _field.Modified -= FieldModified;
         }
 
         private void FieldModified(object sender, FieldModType modType)
         {
             InvokeAction(() =>
             {
-                switch (field.State)
+                switch (_field.State)
                 {
                     case FieldState.AllMinesMarked:
                     case FieldState.AllCellsRevealed:
@@ -75,7 +75,7 @@ namespace Miner.Forms
         {
             InvokeAction(() =>
             {
-                var result = MessageBox.Show("Вы уверены, что хотите завершить игру?",
+                var result = MessageBox.Show(@"Вы уверены, что хотите завершить игру?",
                 String.Empty, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                 if (result == DialogResult.Yes)
                 {
@@ -92,9 +92,9 @@ namespace Miner.Forms
         {
             InvokeAction(() =>
             {
-                if (field.State != FieldState.NotInitialized)
+                if (_field.State != FieldState.NotInitialized)
                 {
-                    fieldView.ShowField();
+                    _fieldView.ShowField();
                 }
             });
         }
@@ -103,19 +103,19 @@ namespace Miner.Forms
         {
             InvokeAction(() =>
             {
-                if (optionsForm.ShowDialog() == DialogResult.OK)
+                if (_optionsForm.ShowDialog() == DialogResult.OK)
                 {
-                    field.Width = optionsForm.FieldWidth;
-                    field.Height = optionsForm.FieldHeight;
-                    field.NumMines = optionsForm.NumMines;
+                    _field.Width = _optionsForm.FieldWidth;
+                    _field.Height = _optionsForm.FieldHeight;
+                    _field.NumMines = _optionsForm.NumMines;
                 }
             });
         }
 
         private void StartGame()
         {
-            field.Initialize();
-            stopwatch.Restart();
+            _field.Initialize();
+            _stopwatch.Restart();
 
             miStartGame.Enabled = false;
             miOptions.Enabled = false;
@@ -123,13 +123,13 @@ namespace Miner.Forms
 
         private void EndGame()
         {
-            stopwatch.Stop();
+            _stopwatch.Stop();
 
             miStartGame.Enabled = true;
             miOptions.Enabled = true;
 
-            submitResultForm.ShowDialog(field.State == FieldState.AllMinesMarked ?
-                GameResult.Win : GameResult.Loss, stopwatch.ElapsedSeconds);
+            _submitResultForm.ShowDialog(_field.State == FieldState.AllMinesMarked ?
+                GameResult.Win : GameResult.Loss, _stopwatch.ElapsedSeconds);
         }
     }
 }

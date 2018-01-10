@@ -1,83 +1,65 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+
 using Miner.Math;
 
 namespace Miner.Data
 {
-    /// <summary>
-    /// Игровое поле.
-    /// </summary>
+    /// <inheritdoc />
     public class Field : IField
     {
-        // Ширина и высота поля.
-        private int width = 0, height = 0;
-
-        // Количество мин на поле.
-        private int numMines = 0;
-
-        /// <summary>
-        /// Возвращает состояние игрового поля.
-        /// </summary>
+        /// <inheritdoc />
         public FieldState State { get; protected set; }
 
-        /// <summary>
-        /// Возвращает или устанавливает ширину поля.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
+        private int _width = 0, _height = 0;
+        private int _numMines = 0;
+
+        private Cell[,] _cells;
+
+        /// <inheritdoc />
         public int Width
         {
-            get
-            {
-                return width;
-            }
+            get => _width;
 
             set
             {
-                SetPropertyValue(ref width, value, v => v > 0);
-                Resized.Invoke(this, EventArgs.Empty);
+                SetPropertyValue(ref _width, value, v => v > 0);
+                ApplySizeChanges();
             }
         }
 
-        /// <summary>
-        /// Возвращает или устанавливает высоту поля.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <inheritdoc />
         public int Height
         {
-            get
-            {
-                return height;
-            }
+            get => _height;
 
             set
             {
-                SetPropertyValue(ref height, value, v => v > 0);
-                Resized.Invoke(this, EventArgs.Empty);
+                SetPropertyValue(ref _height, value, v => v > 0);
+                ApplySizeChanges();
             }
         }
 
-        /// <summary>
-        /// Возвращает или устанавливает число мин на поле.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
+        private void ApplySizeChanges()
+        {
+            _cells = new Cell[_height, _width];
+            Resized?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <inheritdoc />
         public int NumMines
         {
-            get
-            {
-                return numMines;
-            }
+            get => _numMines;
 
             set
             {
-                SetPropertyValue(ref numMines, value, v => v > 0 && v <= width * height);
+                SetPropertyValue(ref _numMines, value, v => v > 0 && v <= _width * _height);
             }
         }
 
-        // Функция проверки ограничения значения свойства.
         private delegate bool SatisfiesConstraint(int value);
 
-        // Устанавливает значение свойства поля.
         private void SetPropertyValue(ref int property,
             int value, SatisfiesConstraint cFunc)
         {
@@ -96,11 +78,8 @@ namespace Miner.Data
             }
         }
 
-        // Клетки поля.
-        private readonly Cell[,] cells;
-
         // Генератор случайных чисел для расстановки мин.
-        private readonly IRandomizer minesPositionsRandomizer;
+        private readonly IRandomizer _minesPositionsRandomizer;
 
         /// <summary>
         /// Создает экземпляр класса.
@@ -123,8 +102,8 @@ namespace Miner.Data
             Height = height;
             NumMines = numMines;
 
-            cells = new Cell[width, height];
-            minesPositionsRandomizer = randomizer ?? new StdRandomizer();
+            _cells = new Cell[height, width];
+            _minesPositionsRandomizer = randomizer ?? new StdRandomizer();
         }
 
         /// <summary>
@@ -143,7 +122,7 @@ namespace Miner.Data
                 PlaceMines();
                 PlaceValues();
                 State = FieldState.AllCellsHidden;
-                Modified.Invoke(this, FieldModType.Initialized);
+                Modified?.Invoke(this, FieldModType.Initialized);
             }
         }
 
@@ -154,8 +133,8 @@ namespace Miner.Data
             {
                 for (int j = 0; j < Width; j++)
                 {
-                    cells[i, j].Object = null;
-                    cells[i, j].State = CellState.Hidden;
+                    _cells[i, j].Object = null;
+                    _cells[i, j].State = CellState.Hidden;
                 }
             }
         }
@@ -166,21 +145,21 @@ namespace Miner.Data
             int mCounter = NumMines;
             while (mCounter != 0)
             {
-                int row = minesPositionsRandomizer.GetValue(0, Height - 1);
+                int row = _minesPositionsRandomizer.GetValue(0, Height - 1);
                 if(row < 0 || row >= Height)
                 {
                     throw new ArgumentOutOfRangeException();
                 }
 
-                int col = minesPositionsRandomizer.GetValue(0, Width - 1);
+                int col = _minesPositionsRandomizer.GetValue(0, Width - 1);
                 if (col < 0 || col >= Width)
                 {
                     throw new ArgumentOutOfRangeException();
                 }
 
-                if (cells[row, col].Object == null)
+                if (_cells[row, col].Object == null)
                 {
-                    cells[row, col].Object = new Mine();
+                    _cells[row, col].Object = new Mine();
                     mCounter--;
                 }
             }
@@ -202,9 +181,9 @@ namespace Miner.Data
         // и записывает значение в эту клетку.
         private void PlaceValue(int row, int col)
         {
-            if (cells[row, col].Object == null)
+            if (_cells[row, col].Object == null)
             {
-                cells[row, col].Object = new NumberOfMines();
+                _cells[row, col].Object = new NumberOfMines();
                 IncreaseNumberOfMines(row, col, row - 1, col - 1);
                 IncreaseNumberOfMines(row, col, row - 1, col);
                 IncreaseNumberOfMines(row, col, row - 1, col + 1);
@@ -222,8 +201,8 @@ namespace Miner.Data
         {
             if (CellAvailable(checkedRow, checkedCol))
             {
-                var numberOfMines = (NumberOfMines)cells[row, col].Object;
-                numberOfMines.Value += cells[checkedRow, checkedCol].Object is Mine ? 1 : 0;
+                var numberOfMines = (NumberOfMines)_cells[row, col].Object;
+                numberOfMines.Value += _cells[checkedRow, checkedCol].Object is Mine ? 1 : 0;
             }
         }
 
@@ -246,17 +225,17 @@ namespace Miner.Data
                 throw new ArgumentOutOfRangeException();
             }
 
-            if (cells[row, col].State == CellState.Marked)
+            if (_cells[row, col].State == CellState.Marked)
             {
                 return;
             }
-            else if (cells[row, col].Object is Mine)
+            else if (_cells[row, col].Object is Mine)
             {
                 RevealAllCells();
             }
             else
             {
-                var numMinesCell = (NumberOfMines)cells[row, col].Object;
+                var numMinesCell = (NumberOfMines)_cells[row, col].Object;
                 if (numMinesCell.Value == 0)
                 {
                     Stack<(int, int)> stack = new Stack<(int, int)>();
@@ -265,13 +244,13 @@ namespace Miner.Data
                     while (stack.Count > 0)
                     {
                         var (r, c) = stack.Pop();
-                        if (!CellAvailable(r, c) || cells[r, c].State == CellState.Revealed)
+                        if (!CellAvailable(r, c) || _cells[r, c].State == CellState.Revealed)
                         {
                             continue;
                         }
 
-                        cells[r, c].State = CellState.Revealed;
-                        numMinesCell = (NumberOfMines)cells[r, c].Object;
+                        _cells[r, c].State = CellState.Revealed;
+                        numMinesCell = (NumberOfMines)_cells[r, c].Object;
                         if (numMinesCell.Value == 0)
                         {
                             stack.Push((r - 1, c));
@@ -287,7 +266,7 @@ namespace Miner.Data
                 }
                 else
                 {
-                    cells[row, col].State = CellState.Revealed;
+                    _cells[row, col].State = CellState.Revealed;
                 }
 
                 State = AllMinesMarked ?
@@ -313,14 +292,14 @@ namespace Miner.Data
 
             if (CellAvailable(row, col))
             {
-                switch (cells[row, col].State)
+                switch (_cells[row, col].State)
                 {
                     case CellState.Hidden:
-                        cells[row, col].State = CellState.Marked;
+                        _cells[row, col].State = CellState.Marked;
                         break;
 
                     case CellState.Marked:
-                        cells[row, col].State = CellState.Hidden;
+                        _cells[row, col].State = CellState.Hidden;
                         break;
                 }
             }
@@ -356,12 +335,12 @@ namespace Miner.Data
             {
                 for (int j = 0; j < Width; j++)
                 {
-                    cells[i, j].State = CellState.Revealed;
+                    _cells[i, j].State = CellState.Revealed;
                 }
             }
 
             State = FieldState.AllCellsRevealed;
-            Modified.Invoke(this, FieldModType.MinesExploded);
+            Modified?.Invoke(this, FieldModType.MinesExploded);
         }
 
         /// <summary>
@@ -383,7 +362,7 @@ namespace Miner.Data
                 throw new ArgumentOutOfRangeException();
             }
 
-            return cells[row, col];
+            return _cells[row, col];
         }
 
         /// <summary>
@@ -393,16 +372,10 @@ namespace Miner.Data
         /// <param name="col">Столбец.</param>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public Cell this[int row, int col]
-        {
-            get
-            {
-                return CellAt(row, col);
-            }
-        }
+        public Cell this[int row, int col] => CellAt(row, col);
 
         // Состояния, недопустимые для изменения состояния клеток поля.
-        private FieldState[] modificationsDisabledStates =
+        private readonly FieldState[] _modificationsDisabledStates =
         {
             FieldState.NotInitialized, FieldState.AllCellsRevealed, FieldState.AllMinesMarked
         };
@@ -410,7 +383,7 @@ namespace Miner.Data
         // Возвращает true, если допустимы изменения состояния клеток поля, иначе - false.
         private bool CellsModificationsAllowed()
         {
-            return !modificationsDisabledStates.Contains(State);
+            return !_modificationsDisabledStates.Contains(State);
         }
 
         /// <summary>
@@ -420,7 +393,7 @@ namespace Miner.Data
         {
             get
             {
-                foreach (var cell in cells)
+                foreach (var cell in _cells)
                 {
                     if (cell.Object is Mine && cell.State != CellState.Marked)
                     {

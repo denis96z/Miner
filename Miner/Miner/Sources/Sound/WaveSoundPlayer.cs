@@ -11,19 +11,19 @@ namespace Miner.Sound
     public class WaveSoundPlayer : ISoundPlayer
     {
         // Встроенный плеер для звука открытия клетки.
-        private readonly SoundPlayer cellRevealedPlayer =
+        private readonly SoundPlayer _cellRevealedPlayer =
             new SoundPlayer(Resources.Reveal);
 
         // Встроенный плеер для зука установки флажка.
-        private readonly SoundPlayer cellMarkedPlayer =
+        private readonly SoundPlayer _cellMarkedPlayer =
             new SoundPlayer(Resources.Mark);
 
         // Встроенный плеер для звука взрыва мин.
-        private readonly SoundPlayer minesExplodedPlayer =
+        private readonly SoundPlayer _minesExplodedPlayer =
             new SoundPlayer(Resources.Explode);
 
         // Игровое поле.
-        private readonly IField field;
+        private readonly IField _field;
 
         /// <summary>
         /// Создает экземпляр класса.
@@ -31,13 +31,13 @@ namespace Miner.Sound
         /// <param name="field">Игровое поле.</param>
         public WaveSoundPlayer(IField field)
         {
-            this.field = field;
-            this.field.Modified += OnFieldModified;
+            this._field = field;
+            this._field.Modified += OnFieldModified;
         }
         
         ~WaveSoundPlayer()
         {
-            field.Modified -= OnFieldModified;
+            _field.Modified -= OnFieldModified;
         }
 
         // Обработчик события изменения клеток поля.
@@ -70,7 +70,7 @@ namespace Miner.Sound
         /// </summary>
         public void PlayCellRevealedSound()
         {
-            cellRevealedPlayer.Play();
+            _cellRevealedPlayer.Play();
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Miner.Sound
         /// </summary>
         public void PlayCellMarkedSound()
         {
-            cellMarkedPlayer.Play();
+            _cellMarkedPlayer.Play();
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Miner.Sound
         /// </summary>
         public void PlayMinesExplodedSound()
         {
-            minesExplodedPlayer.Play();
+            _minesExplodedPlayer.Play();
         }
     }
 }

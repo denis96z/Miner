@@ -10,40 +10,40 @@ namespace Miner.View
         /// <summary>
         /// Ширина и высота клетки игрового поля.
         /// </summary>
-        public const int CELL_SIZE = 30;
+        public const int CellSize = 30;
 
         // Контроллер графической поверхности.
-        private readonly Control control;
+        private readonly Control _control;
         // Графическая поверхность.
-        private readonly Graphics graphics;
+        private readonly Graphics _graphics;
 
         // Изображение мины.
-        private readonly Image mineImage = Resources.Mine;
+        private readonly Image _mineImage = Resources.Mine;
         // Изображение отметки возможной мины.
-        private readonly Image markImage = Resources.Flag;
+        private readonly Image _markImage = Resources.Flag;
 
         // Шрифт цифр.
-        private readonly Font valueFont = new Font("Arial", CELL_SIZE / 2);
+        private readonly Font _valueFont = new Font("Arial", CellSize / 2);
         // Линия указателя выбранной клетки.
-        private readonly Pen selectorPen = new Pen(Color.DarkGreen, 2);
+        private readonly Pen _selectorPen = new Pen(Color.DarkGreen, 2);
 
         public ControlViewAdapter(Control control)
         {
-            this.control = control ?? throw new ArgumentNullException();
-            this.graphics = control.CreateGraphics();
+            this._control = control ?? throw new ArgumentNullException();
+            this._graphics = control.CreateGraphics();
         }
 
         public void ResizeControl(int fieldWidth, int fieldHeight)
         {
-            int controlWidth = CELL_SIZE * fieldWidth;
-            int controlHeight = CELL_SIZE * fieldHeight;
-            control.ClientSize = new Size(controlWidth, controlHeight);
+            int controlWidth = CellSize * fieldWidth;
+            int controlHeight = CellSize * fieldHeight;
+            _control.ClientSize = new Size(controlWidth, controlHeight);
         }
 
         private (int, int) GetCoordinates(int row, int col)
         {
-            int x = col * CELL_SIZE;
-            int y = row * CELL_SIZE;
+            int x = col * CellSize;
+            int y = row * CellSize;
             return (x, y);
         }
 
@@ -51,46 +51,46 @@ namespace Miner.View
         public void DrawHiddenCell(int row, int col)
         {
             (int x, int y) = GetCoordinates(row, col);
-            graphics.FillRectangle(Brushes.DarkGray, x, y, CELL_SIZE, CELL_SIZE);
-            graphics.DrawRectangle(Pens.Black, x, y, CELL_SIZE, CELL_SIZE);
+            _graphics.FillRectangle(Brushes.DarkGray, x, y, CellSize, CellSize);
+            _graphics.DrawRectangle(Pens.Black, x, y, CellSize, CellSize);
         }
 
         // Отображает отмеченную клетку.
         public void DrawMarkedCell(int row, int col)
         {
             (int x, int y) = GetCoordinates(row, col);
-            graphics.DrawImage(markImage, x, y, CELL_SIZE, CELL_SIZE);
-            graphics.DrawRectangle(Pens.Black, x, y, CELL_SIZE, CELL_SIZE);
+            _graphics.DrawImage(_markImage, x, y, CellSize, CellSize);
+            _graphics.DrawRectangle(Pens.Black, x, y, CellSize, CellSize);
         }
 
         // Отображает открытую клетку с миной.
         public void DrawMinedCell(int row, int col)
         {
             (int x, int y) = GetCoordinates(row, col);
-            graphics.DrawImage(mineImage, x, y, CELL_SIZE, CELL_SIZE);
-            graphics.DrawRectangle(Pens.Black, x, y, CELL_SIZE, CELL_SIZE);
+            _graphics.DrawImage(_mineImage, x, y, CellSize, CellSize);
+            _graphics.DrawRectangle(Pens.Black, x, y, CellSize, CellSize);
         }
 
         // Отображает открытую клетку с числом мин, расположенных рядом.
         public void DrawValueCell(int value, int row, int col)
         {
             (int x, int y) = GetCoordinates(row, col);
-            graphics.FillRectangle(Brushes.White, x, y, CELL_SIZE, CELL_SIZE);
-            graphics.DrawString(value != 0 ? value.ToString() : String.Empty,
-                valueFont, Brushes.Green, x + 1, y + 1);
-            graphics.DrawRectangle(Pens.Black, x, y, CELL_SIZE, CELL_SIZE);
+            _graphics.FillRectangle(Brushes.White, x, y, CellSize, CellSize);
+            _graphics.DrawString(value != 0 ? value.ToString() : String.Empty,
+                _valueFont, Brushes.Green, x + 1, y + 1);
+            _graphics.DrawRectangle(Pens.Black, x, y, CellSize, CellSize);
         }
 
         // Отображает указатель выбранной клетки.
         public void DrawSelector(int row, int col)
         {
             (int x, int y) = GetCoordinates(row, col);
-            graphics.DrawRectangle(selectorPen, x, y, CELL_SIZE, CELL_SIZE);
+            _graphics.DrawRectangle(_selectorPen, x, y, CellSize, CellSize);
         }
 
         public void ClearGraphics()
         {
-            graphics.Clear(control.BackColor);
+            _graphics.Clear(_control.BackColor);
         }
     }
 }

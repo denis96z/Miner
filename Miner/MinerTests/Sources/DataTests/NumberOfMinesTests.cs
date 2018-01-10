@@ -11,14 +11,14 @@ namespace MinerTests.DataTests
         [Test]
         public void TestConstructor_ValidValue_ObjectIsCreated()
         {
-            for (int i = NumberOfMines.MIN_VALUE; i <= NumberOfMines.MAX_VALUE; i++)
+            for (int i = NumberOfMines.MinValue; i <= NumberOfMines.MaxValue; i++)
             {
                 var numberOfMines = new NumberOfMines(i);
             }
         }
 
-        [TestCase(NumberOfMines.MIN_VALUE - 1)]
-        [TestCase(NumberOfMines.MAX_VALUE + 1)]
+        [TestCase(NumberOfMines.MinValue - 1)]
+        [TestCase(NumberOfMines.MaxValue + 1)]
         public void TestConstructor_InvalidValue_ThrowsException(int value)
         {
             Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -31,15 +31,15 @@ namespace MinerTests.DataTests
         public void TestValueGetterSetter_ValidValue()
         {
             var numberOfMines = new NumberOfMines();
-            for (int i = NumberOfMines.MIN_VALUE; i <= NumberOfMines.MAX_VALUE; i++)
+            for (int i = NumberOfMines.MinValue; i <= NumberOfMines.MaxValue; i++)
             {
                 numberOfMines.Value = i;
                 Assert.AreEqual(i, numberOfMines.Value);
             }
         }
 
-        [TestCase(NumberOfMines.MIN_VALUE - 1)]
-        [TestCase(NumberOfMines.MAX_VALUE + 1)]
+        [TestCase(NumberOfMines.MinValue - 1)]
+        [TestCase(NumberOfMines.MaxValue + 1)]
         public void TestValueGetterSetter_InvalidValue_ThrowsException(int value)
         {
             var numberOfMines = new NumberOfMines();

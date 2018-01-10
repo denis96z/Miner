@@ -9,14 +9,14 @@ namespace Miner.Time
     public class StdStopwatch : IStopwatch
     {
         // Секундомер.
-        private readonly Stopwatch stopwatch = new Stopwatch();
+        private readonly Stopwatch _stopwatch = new Stopwatch();
 
         /// <summary>
         /// Создает экземпляр класса.
         /// </summary>
         public StdStopwatch()
         {
-            stopwatch.Reset();
+            _stopwatch.Reset();
         }
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace Miner.Time
         /// </summary>
         public void Start()
         {
-            stopwatch.Start();
+            _stopwatch.Start();
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Miner.Time
         /// </summary>
         public void Stop()
         {
-            stopwatch.Stop();
+            _stopwatch.Stop();
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Miner.Time
         /// </summary>
         public void Restart()
         {
-            stopwatch.Restart();
+            _stopwatch.Restart();
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Miner.Time
         /// </summary>
         public void Reset()
         {
-            stopwatch.Reset();
+            _stopwatch.Reset();
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Miner.Time
         {
             get
             {
-                var elapsed = stopwatch.Elapsed;
+                var elapsed = _stopwatch.Elapsed;
                 return elapsed.Hours * 3600 +
                     elapsed.Minutes * 60 +
                     elapsed.Seconds;

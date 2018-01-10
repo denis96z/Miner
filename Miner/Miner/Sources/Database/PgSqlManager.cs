@@ -10,36 +10,36 @@ namespace Miner.Database
     public class PgSqlManager : IDatabaseManager
     {
         // Логин пользователя базы данных.
-        private const string USER_ID = "postgres";
+        private const string UserId = "postgres";
         // Пароль пользователя базы данных.
-        private const string PASSWORD = "0000";
+        private const string Password = "0000";
 
         /// <summary>
         /// Адрес сервера базы данных.
         /// </summary>
-        protected const string HOST = "localhost";
+        protected const string Host = "localhost";
 
         /// <summary>
         /// Порт на сервере базы данных.
         /// </summary>
-        protected const string PORT = "5432";
+        protected const string Port = "5432";
 
         /// <summary>
         /// Имя базы данных на сервере.
         /// </summary>
-        protected const string DATABASE = "Miner";
+        protected const string Database = "Miner";
 
         // Строка подключения к базе данных.
-        private const string CONNECTION_STRING =
-            "User Id=" + USER_ID + ";" +
-            "Password=" + PASSWORD + ";" +
-            "Host=" + HOST + ";" +
-            "Port=" + PORT + ";" +
-            "Database=" + DATABASE + ";";
+        private const string ConnectionString =
+            "User Id=" + UserId + ";" +
+            "Password=" + Password + ";" +
+            "Host=" + Host + ";" +
+            "Port=" + Port + ";" +
+            "Database=" + Database + ";";
 
         // Подключение к базе данных.
-        private readonly PgSqlConnection connection =
-            new PgSqlConnection(CONNECTION_STRING);
+        private readonly PgSqlConnection _connection =
+            new PgSqlConnection(ConnectionString);
 
         /// <summary>
         /// Регистрирует пользователя в базе данных.
@@ -96,10 +96,10 @@ namespace Miner.Database
         // Выполняет запрос к базе данных.
         private void ExecuteNonQuery(string commandText)
         {
-            var command = new PgSqlCommand(commandText, connection);
-            connection.Open();
+            var command = new PgSqlCommand(commandText, _connection);
+            _connection.Open();
             command.ExecuteNonQuery();
-            connection.Close();
+            _connection.Close();
         }
     }
 }

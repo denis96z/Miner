@@ -12,8 +12,8 @@ namespace Miner.Forms
 
         protected void InvokeAction(Action action)
         {
-            //action.Invoke();
-            try
+            action.Invoke();
+            /*try
             {
                 action.Invoke();
             }
@@ -21,7 +21,7 @@ namespace Miner.Forms
             {
                 MessageBox.Show(exception.Message, String.Empty,
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            }*/
         }
     }
 }

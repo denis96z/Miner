@@ -7,28 +7,22 @@ namespace Miner.Input
 {
     public class JoystickManager : IDeviceManager
     {
-        private Joystick joystick = null;
-        private readonly DirectInput directInput = new DirectInput();
+        private Joystick _joystick = null;
+        private readonly DirectInput _directInput = new DirectInput();
 
-        private volatile bool shouldPoll = true;
+        private volatile bool _shouldPoll = true;
 
         private static readonly JoystickManager
-            instance = new JoystickManager();
+            _instance = new JoystickManager();
 
-        public static JoystickManager Instance
-        {
-            get
-            {
-                return instance;
-            }
-        }
+        public static JoystickManager Instance => _instance;
 
         public JoystickManager()
         {
             CommandReceived += (sender, c) => { };
             new Thread(() =>
             {
-                while (shouldPoll)
+                while (_shouldPoll)
                 {
                     PollProcedure();
                 }
@@ -44,9 +38,9 @@ namespace Miner.Input
             }
             catch (SharpDXException)
             {
-                if (joystick != null && !joystick.IsDisposed)
+                if (_joystick != null && !_joystick.IsDisposed)
                 {
-                    joystick.Dispose();
+                    _joystick.Dispose();
                 }
             }
         }
@@ -55,9 +49,9 @@ namespace Miner.Input
         {
             var joystickGuid = Guid.Empty;
 
-            while (shouldPoll)
+            while (_shouldPoll)
             {
-                var devList = directInput.GetDevices(DeviceType.Gamepad,
+                var devList = _directInput.GetDevices(DeviceType.Gamepad,
                     DeviceEnumerationFlags.AllDevices);
                 foreach (var deviceInstance in devList)
                 {
@@ -69,9 +63,9 @@ namespace Miner.Input
                     break;
                 }
 
-                devList = directInput.GetDevices(DeviceType.Joystick,
+                devList = _directInput.GetDevices(DeviceType.Joystick,
                     DeviceEnumerationFlags.AllDevices);
-                foreach (var deviceInstance in directInput
+                foreach (var deviceInstance in _directInput
                         .GetDevices(DeviceType.Joystick, DeviceEnumerationFlags.AllDevices))
                 {
                     joystickGuid = deviceInstance.InstanceGuid;
@@ -89,17 +83,20 @@ namespace Miner.Input
                 Thread.Sleep(1000);
             }
 
-            joystick = new Joystick(directInput, joystickGuid);
-            joystick.Properties.BufferSize = 128;
-            joystick.Acquire();
+            if (_directInput != null && !_directInput.IsDisposed)
+            {
+                _joystick = new Joystick(_directInput, joystickGuid);
+                _joystick.Properties.BufferSize = 128;
+                _joystick.Acquire();
+            }
         }
 
         private void PollJoystick()
         {
-            while (shouldPoll)
+            while (_shouldPoll)
             {
-                joystick.Poll();
-                foreach (var update in joystick.GetBufferedData())
+                _joystick.Poll();
+                foreach (var update in _joystick.GetBufferedData())
                 {
                     var command = ParseCommand(update);
                     if (command != DeviceCommand.Other)
@@ -156,12 +153,12 @@ namespace Miner.Input
 
         public void Dispose()
         {
-            shouldPoll = false;
-            if (joystick != null && !joystick.IsDisposed)
+            _shouldPoll = false;
+            if (_joystick != null && !_joystick.IsDisposed)
             {
-                joystick.Dispose();
+                _joystick.Dispose();
             }
-            directInput.Dispose();
+            _directInput.Dispose();
         }
 
         public event DeviceCommandReceived CommandReceived;

@@ -11,16 +11,16 @@ namespace Miner.View
     public class ControlFieldView : IFieldView
     {
         // Игровое поле.
-        private readonly IField field;
+        private readonly IField _field;
 
         // Адаптер графического контроллера.
-        private readonly IControlViewAdapter controlViewAdapter;
+        private readonly IControlViewAdapter _controlViewAdapter;
 
         // Позиция указателя выбранной клетки.
-        private int selectorRow = 0, selectorCol = 0;
+        private int _selectorRow = 0, _selectorCol = 0;
 
         // Контроллер пользовательского ввода.
-        private readonly IInputManager inputManager;
+        private readonly IInputManager _inputManager;
 
         /// <summary>
         /// Создает экземпляр класса.
@@ -33,16 +33,16 @@ namespace Miner.View
         public ControlFieldView(IField field, IControlViewAdapter controlAdapter,
             IInputManager inputManager, bool selectorVisible = true)
         {
-            this.field = field ?? throw new ArgumentNullException();
-            this.controlViewAdapter = controlAdapter ?? throw new ArgumentNullException();
-            this.inputManager = inputManager ?? throw new ArgumentNullException();
+            this._field = field ?? throw new ArgumentNullException();
+            this._controlViewAdapter = controlAdapter ?? throw new ArgumentNullException();
+            this._inputManager = inputManager ?? throw new ArgumentNullException();
 
             controlAdapter.ResizeControl(field.Width, field.Height);
             SelectorVisible = selectorVisible;
 
-            this.field.Resized += OnFieldResized;
-            this.field.Modified += OnFieldModified;
-            this.inputManager.SelectorMoved += OnSelectorMoved;
+            this._field.Resized += OnFieldResized;
+            this._field.Modified += OnFieldModified;
+            this._inputManager.SelectorMoved += OnSelectorMoved;
         }
 
         /// <summary>
@@ -50,9 +50,9 @@ namespace Miner.View
         /// </summary>
         ~ControlFieldView()
         {
-            field.Resized -= OnFieldResized;
-            field.Modified -= OnFieldModified;
-            inputManager.SelectorMoved -= OnSelectorMoved;
+            _field.Resized -= OnFieldResized;
+            _field.Modified -= OnFieldModified;
+            _inputManager.SelectorMoved -= OnSelectorMoved;
         }
 
         #region ControlMethods
@@ -60,7 +60,7 @@ namespace Miner.View
         // Обработчик события изменения размеров поля.
         private void OnFieldResized(object sender, EventArgs e)
         {
-            controlViewAdapter.ResizeControl(field.Width, field.Height);
+            _controlViewAdapter.ResizeControl(_field.Width, _field.Height);
         }
 
         // Обработчик события изменения клеток поля.
@@ -78,16 +78,16 @@ namespace Miner.View
         /// </summary>
         public void ShowField()
         {
-            for (int row = 0; row < field.Height; row++)
+            for (int row = 0; row < _field.Height; row++)
             {
-                for (int col = 0; col < field.Width; col++)
+                for (int col = 0; col < _field.Width; col++)
                 {
-                    ShowCell(field.CellAt(row, col), row, col);
+                    ShowCell(_field.CellAt(row, col), row, col);
                 }
             }
             if (SelectorVisible)
             {
-                controlViewAdapter.DrawSelector(SelectorRow, SelectorCol);
+                _controlViewAdapter.DrawSelector(SelectorRow, SelectorCol);
             }
         }
 
@@ -116,13 +116,13 @@ namespace Miner.View
         // Отображает скрытую клетку.
         private void ShowHiddenCell(int row, int col)
         {
-            controlViewAdapter.DrawHiddenCell(row, col);
+            _controlViewAdapter.DrawHiddenCell(row, col);
         }
 
         // Отображает отмеченную клетку.
         private void ShowMarkedCell(int row, int col)
         {
-            controlViewAdapter.DrawMarkedCell(row, col);
+            _controlViewAdapter.DrawMarkedCell(row, col);
         }
 
         // Отображает открытую клетку.
@@ -130,12 +130,12 @@ namespace Miner.View
         {
             if (cell.Object is Mine)
             { 
-                controlViewAdapter.DrawMinedCell(row, col);
+                _controlViewAdapter.DrawMinedCell(row, col);
             }
             else if (cell.Object is NumberOfMines)
             {
                 var numberOfMines = (NumberOfMines)cell.Object;
-                controlViewAdapter.DrawValueCell(numberOfMines.Value, row, col);
+                _controlViewAdapter.DrawValueCell(numberOfMines.Value, row, col);
             }
             else
             {
@@ -146,7 +146,7 @@ namespace Miner.View
         // Отображает указатель выбранной клетки.
         private void ShowSelector(int row, int col)
         {
-            controlViewAdapter.DrawSelector(row, col);
+            _controlViewAdapter.DrawSelector(row, col);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace Miner.View
         /// </summary>
         public void HideField()
         {
-            controlViewAdapter.ClearGraphics();
+            _controlViewAdapter.ClearGraphics();
         }
 
         #endregion
@@ -167,14 +167,11 @@ namespace Miner.View
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public int SelectorRow
         {
-            get
-            {
-                return selectorRow;
-            }
+            get => _selectorRow;
 
             private set
             {
-                SetPropertyValue(ref selectorRow, value, v => v >= 0 && v < field.Height);
+                SetPropertyValue(ref _selectorRow, value, v => v >= 0 && v < _field.Height);
             }
         }
 
@@ -184,14 +181,11 @@ namespace Miner.View
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public int SelectorCol
         {
-            get
-            {
-                return selectorCol;
-            }
+            get => _selectorCol;
 
             private set
             {
-                SetPropertyValue(ref selectorCol, value, v => v >= 0 && v < field.Width);
+                SetPropertyValue(ref _selectorCol, value, v => v >= 0 && v < _field.Width);
             }
         }
 
@@ -234,7 +228,7 @@ namespace Miner.View
         // Обработчик события изменения позиции указателя выбранной клетки.
         private void OnSelectorMoved(object sender, EventArgs e)
         {
-            SetSelectorPosition(inputManager.SelectorRow, inputManager.SelectorCol);
+            SetSelectorPosition(_inputManager.SelectorRow, _inputManager.SelectorCol);
         }
 
         #endregion

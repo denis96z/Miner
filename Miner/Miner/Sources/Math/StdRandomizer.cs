@@ -10,7 +10,7 @@ namespace Miner.Math
         /// <summary>
         /// Встроенный генератор случайных чисел.
         /// </summary>
-        private readonly Random random = new Random();
+        private readonly Random _random = new Random();
 
         /// <summary>
         /// Возвращает случайное число в заданном диапазоне.
@@ -20,7 +20,7 @@ namespace Miner.Math
         /// <returns></returns>
         public int GetValue(int minValue, int maxValue)
         {
-            return random.Next(minValue, maxValue + 1);
+            return _random.Next(minValue, maxValue + 1);
         }
     }
 }

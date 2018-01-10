@@ -10,22 +10,22 @@ namespace Miner.Data
         /// <summary>
         /// Минимальное число мин, окружащих клетку.
         /// </summary>
-        public const int MIN_VALUE = 0;
+        public const int MinValue = 0;
 
         /// <summary>
         /// Максимальное число мин, окружащих клетку.
         /// </summary>
-        public const int MAX_VALUE = 8;
+        public const int MaxValue = 8;
 
         // Число мин, окружающих клетку.
-        private int numMines = 0;
+        private int _numMines = 0;
 
         /// <summary>
         /// Создает экземпляр класса.
         /// </summary>
         /// <param name="value">Число мин, окружающих клетку.</param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public NumberOfMines(int value = MIN_VALUE)
+        public NumberOfMines(int value = MinValue)
         {
             Value = value;
         }
@@ -36,16 +36,13 @@ namespace Miner.Data
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public int Value
         {
-            get
-            {
-                return numMines;
-            }
+            get => _numMines;
 
             set
             {
-                if (value >= MIN_VALUE && value <= MAX_VALUE)
+                if (value >= MinValue && value <= MaxValue)
                 {
-                    numMines = value;
+                    _numMines = value;
                 }
                 else
                 {
